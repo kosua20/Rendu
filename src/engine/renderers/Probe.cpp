@@ -15,7 +15,7 @@ Probe::Probe(LightProbe & probe, std::shared_ptr<Renderer> renderer, uint size, 
 	_copy.setupAsDrawable(_renderer->outputColorFormat(), 16, 16, TextureShape::Cube, 1);
 	_irradianceCompute = Resources::manager().getProgramCompute("irradiance_compute");
 
-	_shCoeffs.reset(new Buffer(9 * sizeof(glm::vec4), BufferType::STORAGE));
+	_shCoeffs.reset(new Buffer(9 * sizeof(glm::vec4), BufferType::STORAGE, "Dynamic SH coeffs"));
 	std::vector<glm::vec4> coeffs(9, glm::vec4(0.0f));
 	_shCoeffs->upload(coeffs);
 

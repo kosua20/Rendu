@@ -6,7 +6,7 @@
 
 SSAO::SSAO(uint width, uint height, uint downscale, float radius, const std::string & name) :
 	_ssaoTexture(name + " SSAO"), _finalTexture(name + " SSAO final"), _highBlur(name + " SSAO"), _mediumBlur(true, name + " SSAO"),
-	_samples(16, UniformFrequency::STATIC), _radius(radius), _downscale(downscale) {
+	_samples(16, UniformFrequency::STATIC, "SSAO directions"), _radius(radius), _downscale(downscale) {
 
 	_ssaoTexture.setupAsDrawable(Layout::R8, width/_downscale, height/_downscale);
 	_finalTexture.setupAsDrawable(Layout::R8, width, height);

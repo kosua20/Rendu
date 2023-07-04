@@ -212,7 +212,7 @@ int main(int argc, char ** argv) {
 	const Texture * cubemapInfosDefault = Resources::manager().getTexture("debug-cube", Layout::RGBA8, Storage::GPU);
 
 	Texture cubemapInfos("cubemap");
-	UniformBuffer<glm::vec4> sCoeffs(9, UniformFrequency::STATIC);
+	UniformBuffer<glm::vec4> sCoeffs(9, UniformFrequency::STATIC, "SH Coeffs");
 	sCoeffs.upload();
 	std::vector<Texture> cubeLevels;
 

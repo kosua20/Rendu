@@ -68,7 +68,7 @@ bool LightProbe::decode(const KeyValues & params, Storage options) {
 		}
 
 		if(options & Storage::GPU){
-			_shCoeffs.reset(new Buffer(9 * sizeof(glm::vec4), BufferType::STORAGE));
+			_shCoeffs.reset(new Buffer(9 * sizeof(glm::vec4), BufferType::STORAGE, "Static SH coeffs" ));
 			_shCoeffs->upload(coeffs);
 		}
 	}

@@ -188,7 +188,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 		viewInfo.subresourceRange.layerCount = 1;
 		VK_RET(vkCreateImageView(_context->device, &viewInfo, nullptr, &(color.gpu->view)));
 
-		VkUtils::setDebugName(*_context, VK_OBJECT_TYPE_IMAGE_VIEW, uint64_t(color.gpu->view), "Swapchain color %u - view", i);
+		VkUtils::setDebugName(*_context, VK_OBJECT_TYPE_IMAGE_VIEW, uint64_t(color.gpu->view), "Swapchain color %u - global", i);
 
 		color.gpu->views.resize(1);
 		color.gpu->views[0].views.resize(1);
@@ -205,8 +205,8 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 		VK_RET(vkCreateImageView(_context->device, &viewInfoMip, nullptr, &(color.gpu->views[0].mipView)));
 		VK_RET(vkCreateImageView(_context->device, &viewInfoMip, nullptr, &(color.gpu->views[0].views[0])));
 
-		VkUtils::setDebugName(*_context, VK_OBJECT_TYPE_IMAGE_VIEW, uint64_t(color.gpu->views[0].mipView), "Swapchain color %u - view m0", i);
-		VkUtils::setDebugName(*_context, VK_OBJECT_TYPE_IMAGE_VIEW, uint64_t(color.gpu->views[0].views[0]), "Swapchain color %u - view m0 l0", i);
+		VkUtils::setDebugName(*_context, VK_OBJECT_TYPE_IMAGE_VIEW, uint64_t(color.gpu->views[0].mipView), "Swapchain color %u - mip0", i);
+		VkUtils::setDebugName(*_context, VK_OBJECT_TYPE_IMAGE_VIEW, uint64_t(color.gpu->views[0].views[0]), "Swapchain color %u - mip0 -    level0", i);
 	}
 
 	// Semaphores and fences.
@@ -226,9 +226,9 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 		VkResult finishRes = vkCreateSemaphore(_context->device, &semaphoreInfo, nullptr, &_framesFinished[i]);
 		VkResult inflightRes = vkCreateFence(_context->device, &fenceInfo, nullptr, &_framesInFlight[i]);
 
-		VkUtils::setDebugName(*_context, VK_OBJECT_TYPE_SEMAPHORE, uint64_t(_imagesAvailable[i]), "Semaphore %u - image available", i);
-		VkUtils::setDebugName(*_context, VK_OBJECT_TYPE_SEMAPHORE, uint64_t(_framesFinished[i]), "Semaphore %u - frame finished", i);
-		VkUtils::setDebugName(*_context, VK_OBJECT_TYPE_FENCE, uint64_t(_framesInFlight[i]), "Fence %u - frame in flight", i);
+		VkUtils::setDebugName(*_context, VK_OBJECT_TYPE_SEMAPHORE, uint64_t(_imagesAvailable[i]), "Image available %u", i);
+		VkUtils::setDebugName(*_context, VK_OBJECT_TYPE_SEMAPHORE, uint64_t(_framesFinished[i]), "Frame finished %u", i);
+		VkUtils::setDebugName(*_context, VK_OBJECT_TYPE_FENCE, uint64_t(_framesInFlight[i]), "Frame in flight %u", i);
 
 		if(availRes != VK_SUCCESS || finishRes != VK_SUCCESS || inflightRes != VK_SUCCESS){
 			Log::Error() << Log::GPU << "Unable to create semaphores and fences." << std::endl;

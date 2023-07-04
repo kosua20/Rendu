@@ -450,7 +450,7 @@ VkPipeline PipelineCache::buildGraphicsPipeline(const GPUState& state){
 	}
 	++GPU::_metrics.pipelines;
 
-	VkUtils::setDebugName(*context, VK_OBJECT_TYPE_PIPELINE, uint64_t(pipeline), "Graphic pipeline %s", state.graphicsProgram->name().c_str());
+	VkUtils::setDebugName(*context, VK_OBJECT_TYPE_PIPELINE, uint64_t(pipeline), "Graphic-%s", state.graphicsProgram->name().c_str());
 	return pipeline;
 }
 
@@ -477,6 +477,6 @@ VkPipeline PipelineCache::buildComputePipeline(Program& program){
 		Log::Error() << Log::GPU << "Unable to create pipeline." << std::endl;
 	}
 	++GPU::_metrics.pipelines;
-	VkUtils::setDebugName(*context, VK_OBJECT_TYPE_PIPELINE, uint64_t(pipeline), "Compute pipeline %s",program.name().c_str());
+	VkUtils::setDebugName(*context, VK_OBJECT_TYPE_PIPELINE, uint64_t(pipeline), "Compute-%s",program.name().c_str());
 	return pipeline;
 }

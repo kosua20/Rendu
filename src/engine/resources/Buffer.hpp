@@ -13,8 +13,9 @@ public:
 	/** Constructor.
 	\param sizeInBytes the size of the buffer in bytes
 	\param atype the use type of the buffer (uniform, index, vertex, storage...)
+	\param name the buffer identifier
 	 */
-	Buffer(size_t sizeInBytes, BufferType atype);
+	Buffer(size_t sizeInBytes, BufferType atype, const std::string & name);
 
 	/** Upload data to the buffer. You have to take care of synchronization when
 	 updating a subregion of the buffer that is currently in use.
@@ -67,14 +68,19 @@ public:
 protected:
 
 	/** Internal constructor, exposed for subclasses that override the size.
-	\param atype the use type of the buffer (uniform, index, vertex, storage...)
+	 \param atype the use type of the buffer (uniform, index, vertex, storage...)
+	 \param name the buffer identifier
 	*/
-	Buffer(BufferType atype);
+	Buffer(BufferType atype, const std::string & name);
 
 public:
 
 	size_t size; ///< Buffer size in bytes.
 	std::unique_ptr<GPUBuffer> gpu; ///< The GPU data (optional).
+
+private:
+
+	std::string _name; ///< Resource name.
 
 };
 
@@ -97,8 +103,9 @@ public:
 	/** Constructor.
 	 \param sizeInBytes size of the uniform buffer
 	 \param use the update frequency
+	 \param name the buffer identifier
 	 */
-	UniformBufferBase(size_t sizeInBytes, UniformFrequency use);
+	UniformBufferBase(size_t sizeInBytes, UniformFrequency use, const std::string& name);
 
 	/** Upload data. The buffer will internally copy the data (using the internal size)
 	 to a region of mapped GPU memory. Buffering will be handled based on the update frequency.
@@ -154,8 +161,9 @@ public:
 	/** Constructor.
 	 \param count the number of elements
 	 \param usage the update frequency of the buffer content
+	 \param name the buffer identifier
 	 */
-	UniformBuffer(size_t count, UniformFrequency usage);
+	UniformBuffer(size_t count, UniformFrequency usage, const std::string& name);
 
 	/** Accessor.
 	 \param i the location of the item to retrieve
@@ -223,8 +231,8 @@ public:
 };
 
 template <typename T>
-UniformBuffer<T>::UniformBuffer(size_t count, UniformFrequency usage) :
-	UniformBufferBase(count * sizeof(T), usage) {
+UniformBuffer<T>::UniformBuffer(size_t count, UniformFrequency usage, const std::string& name) :
+	UniformBufferBase(count * sizeof(T), usage, name) {
 	data.resize(count);
 }
 

@@ -145,6 +145,6 @@ DescriptorAllocator::DescriptorPool DescriptorAllocator::createPool(uint count, 
 		return DescriptorPool();
 	}
 
-	VkUtils::setDebugName(*_context, VK_OBJECT_TYPE_DESCRIPTOR_POOL, uint64_t(pool.handle), "Descriptor pool %u", pool.id);
+	VkUtils::setDebugName(*_context, VK_OBJECT_TYPE_DESCRIPTOR_POOL, uint64_t(pool.handle), "Pool %u", pool.id);
 	return pool;
 }

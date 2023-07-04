@@ -131,7 +131,7 @@ void Program::reflect(){
 				continue;
 			}
 
-			_dynamicBuffers[buffer.binding].buffer.reset(new UniformBuffer<char>(buffer.size, UniformFrequency::DYNAMIC));
+			_dynamicBuffers[buffer.binding].buffer.reset(new UniformBuffer<char>(buffer.size, UniformFrequency::DYNAMIC, "Uniforms-" + _name));
 			_dynamicBuffers[buffer.binding].dirty = true;
 			
 			// Add uniforms to look-up table.
@@ -212,7 +212,7 @@ void Program::reflect(){
 			Log::Error() << Log::GPU << "Unable to create set layout." << std::endl;
 		}
 
-		VkUtils::setDebugName(*context, VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, uint64_t(_state.setLayouts[UNIFORMS_SET]), "Set layout %s - %s", "Uniforms", _name.c_str());
+		VkUtils::setDebugName(*context, VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, uint64_t(_state.setLayouts[UNIFORMS_SET]), "%s-%s", "Uniforms", _name.c_str());
 	}
 
 	// Textures.
@@ -237,7 +237,7 @@ void Program::reflect(){
 			Log::Error() << Log::GPU << "Unable to create set layout." << std::endl;
 		}
 
-		VkUtils::setDebugName(*context, VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, uint64_t(_state.setLayouts[IMAGES_SET]), "Set layout %s - %s", "Images", _name.c_str());
+		VkUtils::setDebugName(*context, VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, uint64_t(_state.setLayouts[IMAGES_SET]), "%s-%s", "Images", _name.c_str());
 	}
 
 	// Static buffers.
@@ -262,7 +262,7 @@ void Program::reflect(){
 			Log::Error() << Log::GPU << "Unable to create set layout." << std::endl;
 		}
 
-		VkUtils::setDebugName(*context, VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, uint64_t(_state.setLayouts[BUFFERS_SET]), "Set layout %s - %s", "Buffers", _name.c_str());
+		VkUtils::setDebugName(*context, VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, uint64_t(_state.setLayouts[BUFFERS_SET]), "%s-%s", "Buffers", _name.c_str());
 	}
 
 	// Samplers
@@ -280,7 +280,7 @@ void Program::reflect(){
 		Log::Error() << Log::GPU << "Unable to create pipeline layout." << std::endl;
 	}
 
-	VkUtils::setDebugName(*context, VK_OBJECT_TYPE_PIPELINE_LAYOUT, uint64_t(_state.layout), "Pipeline layout - %s", _name.c_str());
+	VkUtils::setDebugName(*context, VK_OBJECT_TYPE_PIPELINE_LAYOUT, uint64_t(_state.layout), "Layout-%s", _name.c_str());
 
 	// Initialize dynamic UBO descriptors.
 	_currentOffsets.assign(_dynamicBuffers.size(), 0);
@@ -298,7 +298,7 @@ void Program::reflect(){
 	context->descriptorAllocator.freeSet(_currentSets[UNIFORMS_SET]);
 	_currentSets[UNIFORMS_SET] = context->descriptorAllocator.allocateSet(_state.setLayouts[UNIFORMS_SET]);
 
-	VkUtils::setDebugName(*context, VK_OBJECT_TYPE_DESCRIPTOR_SET, uint64_t(_currentSets[UNIFORMS_SET].handle), "Descriptor set %s - %s", "Uniforms", _name.c_str());
+	VkUtils::setDebugName(*context, VK_OBJECT_TYPE_DESCRIPTOR_SET, uint64_t(_currentSets[UNIFORMS_SET].handle), "%s-%s", "Uniforms", _name.c_str());
 
 	std::vector<VkDescriptorBufferInfo> infos(_dynamicBuffers.size());
 	std::vector<VkWriteDescriptorSet> writes;
@@ -405,7 +405,7 @@ void Program::update(){
 		context->descriptorAllocator.freeSet(_currentSets[IMAGES_SET]);
 		_currentSets[IMAGES_SET] = context->descriptorAllocator.allocateSet(_state.setLayouts[IMAGES_SET]);
 
-		VkUtils::setDebugName(*context, VK_OBJECT_TYPE_DESCRIPTOR_SET, uint64_t(_currentSets[IMAGES_SET].handle), "Descriptor set %s - %s", "Images", _name.c_str());
+		VkUtils::setDebugName(*context, VK_OBJECT_TYPE_DESCRIPTOR_SET, uint64_t(_currentSets[IMAGES_SET].handle), "%s set-%s", "Images", _name.c_str());
 
 		std::vector<std::vector<VkDescriptorImageInfo>> imageInfos(_textures.size());
 		std::vector<VkWriteDescriptorSet> writes;
@@ -441,7 +441,7 @@ void Program::update(){
 		context->descriptorAllocator.freeSet(_currentSets[BUFFERS_SET]);
 		_currentSets[BUFFERS_SET] = context->descriptorAllocator.allocateSet(_state.setLayouts[BUFFERS_SET]);
 
-		VkUtils::setDebugName(*context, VK_OBJECT_TYPE_DESCRIPTOR_SET, uint64_t(_currentSets[BUFFERS_SET].handle), "Descriptor set %s - %s", "Buffers", _name.c_str());
+		VkUtils::setDebugName(*context, VK_OBJECT_TYPE_DESCRIPTOR_SET, uint64_t(_currentSets[BUFFERS_SET].handle), "%s set-%s", "Buffers", _name.c_str());
 
 		std::vector<std::vector<VkDescriptorBufferInfo>> infos(_staticBuffers.size());
 		std::vector<VkWriteDescriptorSet> writes;

@@ -8,7 +8,7 @@ IslandApp::IslandApp(RenderingConfig & config, Window & window) : CameraApp(conf
 	_waterEffectsHalf("Water position"), _waterPos("Water effect half"), _waterEffectsBlur("Water effect blur"),
 	_environment("Environment"), _oceanMesh("Ocean"), _farOceanMesh("Far ocean"),
 	_surfaceNoise("surface noise"), _glitterNoise("glitter noise"),
-	 _waves(8, UniformFrequency::FRAME)
+	 _waves(8, UniformFrequency::FRAME, "Waves parameters")
 {
 	_userCamera.projection(config.screenResolution[0] / config.screenResolution[1], 1.34f, 0.1f, 100.0f);
 	_userCamera.pose(glm::vec3(-2.234801,3.446842,-6.892219), glm::vec3(-1.869996,2.552125,-5.859552), glm::vec3(0.210734,0.774429,0.596532));

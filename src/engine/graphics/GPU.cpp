@@ -236,8 +236,8 @@ bool GPU::setupWindow(Window * window){
 	vkGetDeviceQueue(_context.device, _context.graphicsId, 0, &_context.graphicsQueue);
 	vkGetDeviceQueue(_context.device, _context.presentId, 0, &_context.presentQueue);
 
-	VkUtils::setDebugName(_context, VK_OBJECT_TYPE_QUEUE, uint64_t(_context.graphicsQueue), "Graphics queue");
-	VkUtils::setDebugName(_context, VK_OBJECT_TYPE_QUEUE, uint64_t(_context.presentQueue), "Present queue");
+	VkUtils::setDebugName(_context, VK_OBJECT_TYPE_QUEUE, uint64_t(_context.graphicsQueue), "Graphics");
+	VkUtils::setDebugName(_context, VK_OBJECT_TYPE_QUEUE, uint64_t(_context.presentQueue), "Present");
 
 	// Setup allocator.
 	VmaAllocatorCreateInfo allocatorInfo = {};
@@ -290,7 +290,7 @@ bool GPU::setupWindow(Window * window){
 		return false;
 	}
 
-	VkUtils::setDebugName(_context, VK_OBJECT_TYPE_COMMAND_POOL, uint64_t(_context.commandPool), "Main command pool");
+	VkUtils::setDebugName(_context, VK_OBJECT_TYPE_COMMAND_POOL, uint64_t(_context.commandPool), "Main pool");
 
 	// Create query pools.
 	_context.queryAllocators[GPUQuery::Type::TIME_ELAPSED].init(GPUQuery::Type::TIME_ELAPSED, 1024);
@@ -643,7 +643,7 @@ void GPU::setupTexture(Texture & texture) {
 		return;
 	}
 
-	VkUtils::setDebugName(_context, VK_OBJECT_TYPE_IMAGE_VIEW, uint64_t(texture.gpu->view), "%s-view", texture.gpu->name.c_str());
+	VkUtils::setDebugName(_context, VK_OBJECT_TYPE_IMAGE_VIEW, uint64_t(texture.gpu->view), "%s-global", texture.gpu->name.c_str());
 
 	// Slice format
 	VkImageViewType viewTypeSlice = VK_IMAGE_VIEW_TYPE_2D;
@@ -677,7 +677,7 @@ void GPU::setupTexture(Texture & texture) {
 				return;
 			}
 
-			VkUtils::setDebugName(_context, VK_OBJECT_TYPE_IMAGE_VIEW, uint64_t(texture.gpu->views[mid].views[lid]), "%s-view-m%u-l%u", texture.gpu->name.c_str(), mid, lid);
+			VkUtils::setDebugName(_context, VK_OBJECT_TYPE_IMAGE_VIEW, uint64_t(texture.gpu->views[mid].views[lid]), "%s-mip %u-level %u", texture.gpu->name.c_str(), mid, lid);
 		}
 
 		// Create global mip view.
@@ -698,7 +698,7 @@ void GPU::setupTexture(Texture & texture) {
 			return;
 		}
 
-		VkUtils::setDebugName(_context, VK_OBJECT_TYPE_IMAGE_VIEW, uint64_t(texture.gpu->views[mid].mipView), "%s-view-m%u", texture.gpu->name.c_str(), mid);
+		VkUtils::setDebugName(_context, VK_OBJECT_TYPE_IMAGE_VIEW, uint64_t(texture.gpu->views[mid].mipView), "%s-mip %u", texture.gpu->name.c_str(), mid);
 
 	}
 
@@ -742,7 +742,7 @@ void GPU::uploadTexture(const Texture & texture) {
 	size_t currentOffset = 0;
 
 	// Transfer the complete CPU image data to a staging buffer, handling conversion..
-	Buffer transferBuffer(totalSize, BufferType::CPUTOGPU);
+	Buffer transferBuffer(totalSize, BufferType::CPUTOGPU, "ImageStaging");
 
 	if(is8UB){
 		// Convert to uchar on the CPU.
@@ -1149,7 +1149,7 @@ void GPU::uploadBuffer(const Buffer & buffer, size_t size, uchar * data, size_t 
 	}
 
 	// Otherwise, create a transfer buffer.
-	Buffer transferBuffer(size, BufferType::CPUTOGPU);
+	Buffer transferBuffer(size, BufferType::CPUTOGPU, "BufferStaging");
 	transferBuffer.upload(size, data, 0);
 	// Copy operation.
 	VkBufferCopy copyRegion = {};
@@ -1183,7 +1183,7 @@ void GPU::downloadBufferSync(const Buffer & buffer, size_t size, uchar * data, s
 	}
 
 	// Otherwise, create a transfer buffer.
-	Buffer transferBuffer(size, BufferType::GPUTOCPU);
+	Buffer transferBuffer(size, BufferType::GPUTOCPU, "Download");
 
 	// Copy operation.
 	VkCommandBuffer commandBuffer = VkUtils::beginSyncOperations(_context);
@@ -1280,8 +1280,8 @@ void GPU::setupMesh(Mesh & mesh) {
 
 	// Upload data to the buffers. Staging will be handled internally.
 	mesh.gpu->count = mesh.indices.size();
-	mesh.gpu->vertexBuffer.reset(new Buffer(totalSize, BufferType::VERTEX));
-	mesh.gpu->indexBuffer.reset(new Buffer(inSize, BufferType::INDEX));
+	mesh.gpu->vertexBuffer.reset(new Buffer(totalSize, BufferType::VERTEX, "Vertices " + mesh.name()));
+	mesh.gpu->indexBuffer.reset(new Buffer(inSize, BufferType::INDEX, "Indices " + mesh.name()));
 
 	mesh.gpu->vertexBuffer->upload(totalSize, vertexBufferData.data(), 0);
 	mesh.gpu->indexBuffer->upload(inSize, reinterpret_cast<unsigned char *>(mesh.indices.data()), 0);

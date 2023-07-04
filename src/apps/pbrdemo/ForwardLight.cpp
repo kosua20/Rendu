@@ -4,7 +4,7 @@
 const size_t ForwardLight::_maxLightCount = 50;
 
 ForwardLight::ForwardLight(size_t count) :
-	_lightsData(_maxLightCount, UniformFrequency::VIEW) {
+	_lightsData(_maxLightCount, UniformFrequency::VIEW, "Forward lights") {
 	_currentCount = count;
 	if(_currentCount > _maxLightCount){
 		Log::Warning() << "Forward light renderer can only handle the first " << _maxLightCount << " lights (requested " << _currentCount << ")." << std::endl;
@@ -106,7 +106,7 @@ void ForwardLight::draw(const DirectionalLight * light) {
 const size_t ForwardProbe::_maxProbeCount = 4;
 
 ForwardProbe::ForwardProbe(size_t count) :
-	_probesData(_maxProbeCount, UniformFrequency::FRAME) {
+	_probesData(_maxProbeCount, UniformFrequency::FRAME, "Forward probes") {
 	_currentCount = count;
 	if(_currentCount > _maxProbeCount){
 		Log::Warning() << "Forward probe renderer can only handle the first " << _maxProbeCount << " probes (requested " << _currentCount << ")." << std::endl;

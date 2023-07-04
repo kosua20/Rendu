@@ -277,7 +277,7 @@ VkCommandBuffer VkUtils::beginSyncOperations(GPUContext & context){
 	VkCommandBuffer commandBuffer;
 	VK_RET(vkAllocateCommandBuffers(context.device, &allocInfo, &commandBuffer));
 
-	VkUtils::setDebugName(context, VK_OBJECT_TYPE_COMMAND_BUFFER, uint64_t(commandBuffer), "Single shot command buffer");
+	VkUtils::setDebugName(context, VK_OBJECT_TYPE_COMMAND_BUFFER, uint64_t(commandBuffer), "Temporary");
 
 	// Record in it immediatly.
 	VkCommandBufferBeginInfo beginInfo = {};
@@ -429,7 +429,7 @@ void VkUtils::createCommandBuffers(GPUContext & context, uint count){
 		return;
 	}
 	for(uint i = 0; i < count; ++i){
-		VkUtils::setDebugName(context, VK_OBJECT_TYPE_COMMAND_BUFFER, uint64_t(context.renderCommandBuffers[i]), "Render command buffer %u", i);
+		VkUtils::setDebugName(context, VK_OBJECT_TYPE_COMMAND_BUFFER, uint64_t(context.renderCommandBuffers[i]), "Render %u", i);
 	}
 
 	context.uploadCommandBuffers.resize(count);
@@ -444,7 +444,7 @@ void VkUtils::createCommandBuffers(GPUContext & context, uint count){
 	}
 
 	for(uint i = 0; i < count; ++i){
-		VkUtils::setDebugName(context, VK_OBJECT_TYPE_COMMAND_BUFFER, uint64_t(context.uploadCommandBuffers[i]), "Upload command buffer %u", i);
+		VkUtils::setDebugName(context, VK_OBJECT_TYPE_COMMAND_BUFFER, uint64_t(context.uploadCommandBuffers[i]), "Upload %u", i);
 	}
 }
 
@@ -646,7 +646,7 @@ glm::uvec2 VkUtils::copyTextureRegionToBuffer(VkCommandBuffer& commandBuffer, co
 		currentCount += imageCount;
 	}
 
-	dstBuffer.reset(new Buffer(currentSize, BufferType::GPUTOCPU));
+	dstBuffer.reset(new Buffer(currentSize, BufferType::GPUTOCPU, "ImageCopy"));
 
 	// Copy from the intermediate texture.
 	vkCmdCopyImageToBuffer(commandBuffer, transferTexture.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dstBuffer->gpu->buffer, uint32_t(blitRegions.size()), blitRegions.data());

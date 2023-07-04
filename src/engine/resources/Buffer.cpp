@@ -7,11 +7,11 @@
 
 
 
-Buffer::Buffer(size_t sizeInBytes, BufferType atype) : type(atype), size(sizeInBytes) {
+Buffer::Buffer(size_t sizeInBytes, BufferType atype, const std::string & name) : type(atype), size(sizeInBytes), _name(name) {
 	GPU::setupBuffer(*this);
 }
 
-Buffer::Buffer(BufferType atype) : type(atype), size(0u) {
+Buffer::Buffer(BufferType atype, const std::string & name) : type(atype), size(0u), _name(name) {
 	// Don't set it up immediately.
 }
 
@@ -45,7 +45,7 @@ void Buffer::download(size_t sizeInBytes, unsigned char * data, size_t offset){
 }
 
 
-UniformBufferBase::UniformBufferBase(size_t sizeInBytes, UniformFrequency use) : Buffer(BufferType::UNIFORM), _baseSize(sizeInBytes)
+UniformBufferBase::UniformBufferBase(size_t sizeInBytes, UniformFrequency use, const std::string& name) : Buffer(BufferType::UNIFORM, name), _baseSize(sizeInBytes)
 {
 	// Number of instances of the buffer stored internally, based on usage.
 	int multipler = 1;

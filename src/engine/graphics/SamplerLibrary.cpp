@@ -52,12 +52,12 @@ void SamplerLibrary::init(){
 		Log::Error() << Log::GPU << "Unable to create sampler set layout." << std::endl;
 	}
 
-	VkUtils::setDebugName(*context, VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, uint64_t(_layout), "Set layout %s - %s", "Samplers", "shared");
+	VkUtils::setDebugName(*context, VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, uint64_t(_layout), "%s-%s", "Samplers", "shared");
 
 	// Create descriptor set.
 	_set = context->descriptorAllocator.allocateSet(_layout);
 
-	VkUtils::setDebugName(*context, VK_OBJECT_TYPE_DESCRIPTOR_SET, uint64_t(_set.handle), "Descriptor set %s - %s", "Samplers", "shared");
+	VkUtils::setDebugName(*context, VK_OBJECT_TYPE_DESCRIPTOR_SET, uint64_t(_set.handle), "%s set-%s", "Samplers", "shared");
 }
 
 
@@ -103,6 +103,6 @@ VkSampler SamplerLibrary::setupSampler(const SamplerSettings& settings) {
 		Log::Error() << Log::GPU << "Unable to create a sampler." << std::endl;
 	}
 
-	VkUtils::setDebugName(*context, VK_OBJECT_TYPE_SAMPLER, uint64_t(sampler), "Sampler %s", settings.name.c_str());
+	VkUtils::setDebugName(*context, VK_OBJECT_TYPE_SAMPLER, uint64_t(sampler), "%s", settings.name.c_str());
 	return sampler;
 }
