@@ -146,7 +146,7 @@ jobs:
             premake-opts: gmake2
           - os: windows-2019
             premake-opts: vs2019
-          - os: macos-10.15
+          - os: macos-11
             premake-opts: gmake2
     
     runs-on: ${{ matrix.os }}
