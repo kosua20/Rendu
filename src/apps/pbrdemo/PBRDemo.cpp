@@ -94,20 +94,27 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 
 void PBRDemo::updateMaps(){
 	// Light shadows pass.
-	_shadowTime.begin();
-	for(const auto & map : _shadowMaps) {
-		map->draw(*_scenes[_currentScene]);
+	{
+		GPUMarker marker("Shadow maps");
+		_shadowTime.begin();
+		for(const auto & map : _shadowMaps) {
+			map->draw(*_scenes[_currentScene]);
+		}
+		_shadowTime.end();
 	}
-	_shadowTime.end();
+
 
 	// Probes pass.
-	_probesTime.begin();
-	for(auto & probe : _probes) {
-		// For now, ensure each dynamic probe is entirely updated over frameCount frames.
-		const uint budget = probe->totalBudget() / _frameCount;
-		probe->update(budget);
+	{
+		GPUMarker marker("Probes");
+		_probesTime.begin();
+		for(auto & probe : _probes) {
+			// For now, ensure each dynamic probe is entirely updated over frameCount frames.
+			const uint budget = probe->totalBudget() / _frameCount;
+			probe->update(budget);
+		}
+		_probesTime.end();
 	}
-	_probesTime.end();
 
 }
 

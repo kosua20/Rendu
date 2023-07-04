@@ -15,6 +15,7 @@ BoxBlur::BoxBlur(bool approximate, const std::string & name) : _intermediate(nam
 
 // Draw function
 void BoxBlur::process(const Texture& src, Texture & dst) {
+	GPUMarker marker("Box blur");
 
 	GPU::setDepthState(false);
 	GPU::setBlendState(false);

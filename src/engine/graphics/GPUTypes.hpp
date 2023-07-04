@@ -449,6 +449,51 @@ private:
 
 STD_HASH(GPUQuery::Type);
 
+
+/** \brief Inserted a marker on the current render or upload command buffer.
+ These markers are visible in profling and debugging tools such as Renderdoc, as are object debug labels.
+ \ingroup Graphics
+ */
+class GPUMarker {
+public:
+
+	/** Lifetime duration of marker */
+	enum class Type : uint {
+		SCOPE, ///< The marker will aggregate everything recorded in the command buffer during the marker lifetime
+		INSERT ///< The marker will be inserted at the current point
+	};
+
+	/** Target command buffer of marker */
+	enum class Target : uint {
+		RENDER, ///< The marker will be inserted in the render command buffer
+		UPLOAD ///< The marker will be inserted in the upload command buffer
+	};
+
+	/** Constructor
+	 \param label the label to display
+	 \param color the color to use for the marker (in Renderdoc for instance)
+	 \param type the lifetime duration of the marker
+	 \param target the target command buffer
+	 */
+	GPUMarker(const std::string& label, const glm::vec4& color = glm::vec4(1.f), Type type = GPUMarker::Type::SCOPE, Target target = GPUMarker::Target::RENDER);
+
+	/** Constructor
+	 \param label the label to display
+	 \param type the lifetime duration of the marker
+	 \param target the target command buffer
+	 */
+	GPUMarker(const std::string& label, Type type, Target target);
+
+	/// Destructor
+	~GPUMarker();
+
+private:
+
+	Type _type = GPUMarker::Type::SCOPE; ///< The type of marker.
+	Target _target = GPUMarker::Target::RENDER; ///< The target command buffer.
+
+};
+
 /** \brief Descriptor set allocation.
  \ingroup Graphics
  */

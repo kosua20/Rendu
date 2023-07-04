@@ -142,3 +142,41 @@ uint64_t GPUQuery::value(){
 	// Else we just return the first number.
 	return data[0];
 }
+
+GPUMarker::GPUMarker(const std::string& label, const glm::vec4& color, GPUMarker::Type type, GPUMarker::Target target) : _type(type), _target(target){
+	GPUContext* context = GPU::getInternal();
+	if(!context->markersEnabled){
+		return;
+	}
+
+	VkDebugUtilsLabelEXT labelInfo = {};
+	labelInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
+	labelInfo.pLabelName = label.c_str();
+	labelInfo.color[0] = color[0];
+	labelInfo.color[1] = color[1];
+	labelInfo.color[2] = color[2];
+	labelInfo.color[3] = color[3];
+
+	VkCommandBuffer& commandBuffer = _target == Target::RENDER ? context->getRenderCommandBuffer() : context->getUploadCommandBuffer();
+
+	if(_type == Type::INSERT){
+		vkCmdInsertDebugUtilsLabelEXT(commandBuffer, &labelInfo);
+	} else {
+		vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &labelInfo);
+	}
+}
+
+GPUMarker::GPUMarker(const std::string& label, Type type, Target target) : GPUMarker(label, glm::vec4(1.f), type, target) {}
+
+GPUMarker::~GPUMarker(){
+	GPUContext* context = GPU::getInternal();
+	if(!context->markersEnabled){
+		return;
+	}
+	if(_type == Type::INSERT){
+		return;
+	}
+
+	VkCommandBuffer& commandBuffer = _target == Target::RENDER ? context->getRenderCommandBuffer() : context->getUploadCommandBuffer();
+	vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+}

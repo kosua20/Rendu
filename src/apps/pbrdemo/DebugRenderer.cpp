@@ -94,6 +94,8 @@ void DebugRenderer::draw(const Camera & camera, Texture* dstColor, Texture* dstD
 	assert(dstColor);
 	assert(dstDepth);
 
+	GPUMarker marker("Debug draw");
+
 	const glm::mat4 & view = camera.view();
 	const glm::mat4 & proj = camera.projection();
 	const glm::mat4 vp = proj * view;

@@ -37,11 +37,14 @@ void PostProcessStack::process(const Texture& src, const glm::mat4 & proj, const
 
 	const glm::vec2 invRenderSize = 1.0f / glm::vec2(dst.width, dst.height);
 
+
+	GPUMarker marker("Post process");
 	GPU::setDepthState(false);
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
 	if(_settings.dof){
+		GPUMarker marker("Depth of field");
 		// --- DoF pass ------
 		// Compute circle of confidence along with the depth and downscaled color.
 		GPU::bind(Load::Operation::DONTCARE, &_dofDownscaledColor, &_dofCocAndDepth);
@@ -78,39 +81,51 @@ void PostProcessStack::process(const Texture& src, const glm::mat4 & proj, const
 	}
 
 	if(_settings.bloom) {
+		GPUMarker marker("Bloom");
+
 		// --- Bloom selection pass ------
-		GPU::bind(Load::Operation::DONTCARE, &_bloomBuffer);
-		GPU::setViewport(_bloomBuffer);
-		_bloomProgram->use();
-		_bloomProgram->uniform("luminanceTh", _settings.bloomTh);
-		_bloomProgram->texture(_resultTexture, 0);
-		GPU::drawQuad();
+		{
+			GPUMarker marker("Extraction");
+			GPU::bind(Load::Operation::DONTCARE, &_bloomBuffer);
+			GPU::setViewport(_bloomBuffer);
+			_bloomProgram->use();
+			_bloomProgram->uniform("luminanceTh", _settings.bloomTh);
+			_bloomProgram->texture(_resultTexture, 0);
+			GPU::drawQuad();
+		}
 		
 		// --- Bloom blur pass ------
 		_blur->process(_bloomBuffer, _bloomBuffer);
 		
 		// Add back the scene content.
-		GPU::bind(Load::Operation::LOAD, &_resultTexture);
-		GPU::setViewport(_resultTexture);
-		GPU::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE);
-		_bloomComposite->use();
-		_bloomComposite->uniform("scale", _settings.bloomMix);
-		_bloomComposite->texture(_bloomBuffer, 0);
-		GPU::drawQuad();
-		GPU::setBlendState(false);
+		{
+			GPUMarker marker("Compositing");
+			GPU::bind(Load::Operation::LOAD, &_resultTexture);
+			GPU::setViewport(_resultTexture);
+			GPU::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE);
+			_bloomComposite->use();
+			_bloomComposite->uniform("scale", _settings.bloomMix);
+			_bloomComposite->texture(_bloomBuffer, 0);
+			GPU::drawQuad();
+			GPU::setBlendState(false);
+		}
 		// Steps below ensures that we will always have an intermediate target.
 	}
 
 	// --- Tonemapping pass ------
-	GPU::bind(Load::Operation::DONTCARE, &_toneMapBuffer);
-	GPU::setViewport(_toneMapBuffer);
-	_toneMappingProgram->use();
-	_toneMappingProgram->uniform("customExposure", _settings.exposure);
-	_toneMappingProgram->uniform("apply", _settings.tonemap);
-	_toneMappingProgram->texture(_resultTexture, 0);
-	GPU::drawQuad();
+	{
+		GPUMarker marker("Tonemap");
+		GPU::bind(Load::Operation::DONTCARE, &_toneMapBuffer);
+		GPU::setViewport(_toneMapBuffer);
+		_toneMappingProgram->use();
+		_toneMappingProgram->uniform("customExposure", _settings.exposure);
+		_toneMappingProgram->uniform("apply", _settings.tonemap);
+		_toneMappingProgram->texture(_resultTexture, 0);
+		GPU::drawQuad();
+	}
 
 	if(_settings.fxaa) {
+		GPUMarker marker("FXAA");
 		GPU::bind(layer, 0, Load::Operation::LOAD, &dst);
 		GPU::setViewport(dst);
 		_fxaaProgram->use();

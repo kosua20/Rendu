@@ -49,6 +49,8 @@ void ForwardRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 
 void ForwardRenderer::renderDepth(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj){
 
+	GPUMarker marker("Z prepass");
+
 	GPU::setDepthState(true, TestFunction::LESS, true);
 	GPU::setCullState(true, Faces::BACK);
 	GPU::setBlendState(false);
@@ -98,6 +100,8 @@ void ForwardRenderer::renderDepth(const Culler::List & visibles, const glm::mat4
 }
 
 void ForwardRenderer::renderOpaque(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj){
+
+	GPUMarker marker("Opaque objects");
 
 	GPU::setDepthState(true, TestFunction::LEQUAL, true);
 	GPU::setCullState(true, Faces::BACK);
@@ -191,6 +195,8 @@ void ForwardRenderer::renderOpaque(const Culler::List & visibles, const glm::mat
 
 void ForwardRenderer::renderTransparent(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj){
 
+	GPUMarker marker("Transparent objects");
+
 	const auto & shadowMaps = _lightsGPU->shadowMaps();
 
 	GPU::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE_MINUS_SRC_ALPHA);
@@ -266,6 +272,8 @@ void ForwardRenderer::renderTransparent(const Culler::List & visibles, const glm
 }
 
 void ForwardRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos) {
+	GPUMarker marker("Background");
+
 	// No need to write the skybox depth to the framebuffer.
 	// Accept a depth of 1.0 (far plane).
 	GPU::setDepthState(true, TestFunction::LEQUAL, false);
@@ -319,6 +327,8 @@ void ForwardRenderer::draw(const Camera & camera, Texture* dstColor, Texture* ds
 	assert(dstColor);
 	assert(dstDepth == nullptr);
 
+	GPUMarker marker("Forward render");
+
 	const glm::mat4 & view = camera.view();
 	const glm::mat4 & proj = camera.projection();
 	const glm::vec3 & pos  = camera.position();
@@ -351,7 +361,6 @@ void ForwardRenderer::draw(const Camera & camera, Texture* dstColor, Texture* ds
 
 	// Update all shaders shared parameters.
 	{
-
 		const glm::mat4 invView = glm::inverse(view);
 		const glm::vec2 invScreenSize = 1.0f / glm::vec2(_sceneColor.width, _sceneColor.height);
 		// Update shared data for the three programs.

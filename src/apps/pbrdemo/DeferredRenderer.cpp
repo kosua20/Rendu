@@ -64,7 +64,9 @@ void DeferredRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 }
 
 void DeferredRenderer::renderOpaque(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj) {
-	
+
+	GPUMarker marker("Opaque objects");
+
 	GPU::setDepthState(true, TestFunction::LESS, true);
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
@@ -183,6 +185,8 @@ void DeferredRenderer::renderOpaque(const Culler::List & visibles, const glm::ma
 
 void DeferredRenderer::renderTransparent(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj){
 
+	GPUMarker marker("Transparent objects");
+
 	const auto & shadowMaps = _fwdLightsGPU->shadowMaps();
 
 	GPU::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE_MINUS_SRC_ALPHA);
@@ -277,6 +281,9 @@ void DeferredRenderer::renderTransparent(const Culler::List & visibles, const gl
 }
 
 void DeferredRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos){
+
+	GPUMarker marker("Background");
+
 	// Background.
 	// No need to write the skybox depth to the framebuffer.
 	// Accept a depth of 1.0 (far plane).
@@ -328,6 +335,9 @@ void DeferredRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 
 }
 
 void DeferredRenderer::draw(const Camera & camera, Texture* dstColor, Texture* dstDepth, uint layer) {
+
+	GPUMarker marker("Deferred render");
+
 	assert(dstColor);
 	assert(dstDepth == nullptr);
 
@@ -339,12 +349,15 @@ void DeferredRenderer::draw(const Camera & camera, Texture* dstColor, Texture* d
 	const auto & visibles = _culler->cullAndSort(view, proj, pos);
 
 	// Render opaque objects and the background to the Gbuffer.
-	// Clear the depth buffer (we know we will draw everywhere, no need to clear color).
-	GPU::bind(Load::Operation::DONTCARE, 1.0f, Load::Operation::DONTCARE, &_sceneDepth, &_sceneAlbedo, &_sceneNormal, &_sceneEffects);
-	GPU::setViewport(_sceneDepth);
+	{
+		GPUMarker marker("Gbuffer");
+		// Clear the depth buffer (we know we will draw everywhere, no need to clear color).
+		GPU::bind(Load::Operation::DONTCARE, 1.0f, Load::Operation::DONTCARE, &_sceneDepth, &_sceneAlbedo, &_sceneNormal, &_sceneEffects);
+		GPU::setViewport(_sceneDepth);
 
-	renderOpaque(visibles, view, proj);
-	renderBackground(view, proj, pos);
+		renderOpaque(visibles, view, proj);
+		renderBackground(view, proj, pos);
+	}
 
 	// SSAO pass
 	if(_applySSAO) {
@@ -360,29 +373,39 @@ void DeferredRenderer::draw(const Camera & camera, Texture* dstColor, Texture* d
 	_lightRenderer->updateCameraInfos(view, proj);
 
 	// Accumulate probe contributions.
-	GPU::bind(glm::vec4(0.0f), &_indirectLighting);
-	GPU::setViewport(_indirectLighting);
-	for(const LightProbe& probe : _scene->probes){
-		_probeRenderer->draw(probe);
+	{
+		GPUMarker marker("Probes lighting");
+		GPU::bind(glm::vec4(0.0f), &_indirectLighting);
+		GPU::setViewport(_indirectLighting);
+		for(const LightProbe& probe : _scene->probes){
+			_probeRenderer->draw(probe);
+		}
 	}
 
+
 	// Main lighting accumulation.
-	GPU::bind(Load::Operation::DONTCARE, Load::Operation::LOAD, Load::Operation::DONTCARE, &_depthCopy, &_lighting);
-	GPU::setViewport(_lighting);
+	{
+		GPU::bind(Load::Operation::DONTCARE, Load::Operation::LOAD, Load::Operation::DONTCARE, &_depthCopy, &_lighting);
+		GPU::setViewport(_lighting);
 
-	// Merge probes contributions and background.
-	GPU::setDepthState(false);
-	GPU::setBlendState(false);
-	GPU::setCullState(true, Faces::BACK);
-	_probeNormalization->use();
-	_probeNormalization->texture(_sceneAlbedo, 0);
-	_probeNormalization->texture(_sceneEffects, 1);
-	_probeNormalization->texture(_indirectLighting, 2);
-	GPU::drawQuad();
+		// Merge probes contributions and background.
+		{
+			GPUMarker marker("Probes normalization");
+			GPU::setDepthState(false);
+			GPU::setBlendState(false);
+			GPU::setCullState(true, Faces::BACK);
+			_probeNormalization->use();
+			_probeNormalization->texture(_sceneAlbedo, 0);
+			_probeNormalization->texture(_sceneEffects, 1);
+			_probeNormalization->texture(_indirectLighting, 2);
+			GPU::drawQuad();
+		}
 
-	// Light contributions.
-	for(auto & light : _scene->lights) {
-		light->draw(*_lightRenderer);
+		GPUMarker marker("Direct lighting");
+		// Light contributions.
+		for(auto & light : _scene->lights) {
+			light->draw(*_lightRenderer);
+		}
 	}
 
 	// If transparent objects are present, prepare the forward pass.

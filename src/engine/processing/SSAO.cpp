@@ -61,21 +61,26 @@ SSAO::SSAO(uint width, uint height, uint downscale, float radius, const std::str
 // Draw function
 void SSAO::process(const glm::mat4 & projection, const Texture& depthTex, const Texture& normalTex) {
 
+	GPUMarker marker("SSAO");
+
 	GPU::setDepthState(false);
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	GPU::bind(Load::Operation::DONTCARE, &_ssaoTexture);
-	GPU::setViewport(_ssaoTexture);
+	{
+		GPUMarker marker("Computation");
+		GPU::bind(Load::Operation::DONTCARE, &_ssaoTexture);
+		GPU::setViewport(_ssaoTexture);
 
-	_programSSAO->use();
-	_programSSAO->uniform("projectionMatrix", projection);
-	_programSSAO->uniform("radius", _radius);
-	_programSSAO->buffer(_samples, 0);
-	_programSSAO->texture(depthTex, 0);
-	_programSSAO->texture(normalTex, 1);
-	_programSSAO->texture(_noisetexture, 2);
-	GPU::drawQuad();
+		_programSSAO->use();
+		_programSSAO->uniform("projectionMatrix", projection);
+		_programSSAO->uniform("radius", _radius);
+		_programSSAO->buffer(_samples, 0);
+		_programSSAO->texture(depthTex, 0);
+		_programSSAO->texture(normalTex, 1);
+		_programSSAO->texture(_noisetexture, 2);
+		GPU::drawQuad();
+	}
 
 	// Blurring pass
 	if(_quality == Quality::HIGH){

@@ -9,7 +9,8 @@ BilateralBlur::BilateralBlur(const std::string & name) : _intermediate(name + "B
 
 // Draw function
 void BilateralBlur::process(const glm::mat4 & projection, const Texture& src, const Texture& depthTex, const Texture& normalTex, Texture & dst) {
-
+	
+	GPUMarker marker("Bilateral blur");
 	GPU::setDepthState(false);
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);

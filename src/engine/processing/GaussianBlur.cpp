@@ -18,6 +18,8 @@ void GaussianBlur::process(const Texture& src, Texture & dst) {
 		return;
 	}
 
+	GPUMarker marker("Gaussian blur");
+
 	GPU::setDepthState(false);
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
@@ -44,6 +46,7 @@ void GaussianBlur::process(const Texture& src, Texture & dst) {
 	// Downscale filter.
 	_blurProgramDown->use();
 	for(size_t d = 1; d < _levels.size(); ++d) {
+		GPUMarker marker("Blur down");
 		GPU::bind(glm::vec4(0.0f), &_levels[d]);
 		GPU::setViewport(_levels[d]);
 		_blurProgramDown->texture(_levels[d - 1], 0);
@@ -53,6 +56,7 @@ void GaussianBlur::process(const Texture& src, Texture & dst) {
 	// Upscale filter.
 	_blurProgramUp->use();
 	for(int d = int(_levels.size()) - 2; d >= 0; --d) {
+		GPUMarker marker("Blur up");
 		GPU::bind(glm::vec4(0.0f), &_levels[d]);
 		GPU::setViewport(_levels[d]);
 		_blurProgramUp->texture(_levels[d + 1], 0);

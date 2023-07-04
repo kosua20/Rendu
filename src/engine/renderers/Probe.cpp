@@ -36,6 +36,8 @@ void Probe::update(uint budget){
 	while(budget > 0){
 		switch (_currentState) {
 			case ProbeState::DRAW_FACES:
+			{
+				GPUMarker marker("Probe render");
 				// Draw the current face.
 				_renderer->draw(_cameras[_substepDraw], &_result, nullptr, _substepDraw);
 				++_substepDraw;
@@ -45,8 +47,10 @@ void Probe::update(uint budget){
 					_currentState = ProbeState::CONVOLVE_RADIANCE;
 				}
 				break;
-
+			}
 			case ProbeState::CONVOLVE_RADIANCE:
+			{
+				GPUMarker marker("Probe convolve");
 				// Generate a level of the radiance.
 				convolveRadiance(1.2f, _substepRadiance);
 				++_substepRadiance;
@@ -57,13 +61,15 @@ void Probe::update(uint budget){
 					_currentState = ProbeState::GENERATE_IRRADIANCE;
 				}
 				break;
-
+			}
 			case ProbeState::GENERATE_IRRADIANCE:
+			{
+				GPUMarker marker("Probe irradiance");
 				// Generate irradiance.
 				estimateIrradiance(5.0f);
 				_currentState = ProbeState::DRAW_FACES;
 				break;
-
+			}
 			default:
 				break;
 		}
