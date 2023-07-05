@@ -13,6 +13,8 @@
 #define VMA_DYNAMIC_VULKAN_FUNCTIONS 0
 #define VMA_IMPLEMENTATION
 
+#define FORCE_MARKERS_VULKAN
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-field-initializers"
 #pragma clang diagnostic ignored "-Wunused-parameter"
@@ -46,14 +48,18 @@ bool GPU::setup(const std::string & appName) {
 		return false;
 	}
 
-	bool debugEnabled = false;
 	bool wantsMarkers = false;
-#if defined(DEBUG) || defined(FORCE_DEBUG_VULKAN)
+#if defined(DEBUG) || defined(FORCE_MARKERS_VULKAN)
+	wantsMarkers	  = VkUtils::checkExtensionsSupport({VK_EXT_DEBUG_UTILS_EXTENSION_NAME});
+#endif
+
+	bool debugEnabled = false;
+#if defined(DEBUG) || defined(FORCELAYERS_VULKAN)
 	// Only enable if the layers are supported.
-	debugEnabled = VkUtils::checkLayersSupport(validationLayers);
-	wantsMarkers = VkUtils::checkExtensionsSupport({ VK_EXT_DEBUG_UTILS_EXTENSION_NAME });
+	debugEnabled	  = VkUtils::checkLayersSupport(validationLayers);
 	debugEnabled &= wantsMarkers;
 #endif
+
 	bool wantsPortability = false;
 #if defined(__APPLE__) || defined(FORCE_PORTABILITY)
 	wantsPortability = true;
