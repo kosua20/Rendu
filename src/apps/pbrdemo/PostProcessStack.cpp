@@ -47,7 +47,7 @@ void PostProcessStack::process(const Texture& src, const glm::mat4 & proj, const
 		GPUMarker marker("Depth of field");
 		// --- DoF pass ------
 		// Compute circle of confidence along with the depth and downscaled color.
-		GPU::bind(Load::Operation::DONTCARE, &_dofDownscaledColor, &_dofCocAndDepth);
+		GPU::beginRender(Load::Operation::DONTCARE, &_dofDownscaledColor, &_dofCocAndDepth);
 		GPU::setViewport(_dofDownscaledColor);
 		_dofCocProgram->use();
 		_dofCocProgram->uniform("projParams", glm::vec2(proj[2][2], proj[3][2]));
@@ -56,28 +56,32 @@ void PostProcessStack::process(const Texture& src, const glm::mat4 & proj, const
 		_dofCocProgram->texture(src, 0);
 		_dofCocProgram->texture(depth, 1);
 		GPU::drawQuad();
+		GPU::endRender();
 		// Gather from neighbor samples.
-		GPU::bind(Load::Operation::DONTCARE, &_dofGatherBuffer);
+		GPU::beginRender(Load::Operation::DONTCARE, &_dofGatherBuffer);
 		GPU::setViewport(_dofGatherBuffer);
 		_dofGatherProgram->use();
 		_dofGatherProgram->uniform("invSize", 1.0f/glm::vec2(_dofCocAndDepth.width, _dofCocAndDepth.height));
 		_dofGatherProgram->texture(_dofDownscaledColor, 0);
 		_dofGatherProgram->texture(_dofCocAndDepth, 1);
 		GPU::drawQuad();
+		GPU::endRender();
 		// Finally composite back with full res image.
-		GPU::bind(Load::Operation::DONTCARE, &_resultTexture);
+		GPU::beginRender(Load::Operation::DONTCARE, &_resultTexture);
 		GPU::setViewport(_resultTexture);
 		_dofCompositeProgram->use();
 		_dofCompositeProgram->texture(src, 0);
 		_dofCompositeProgram->texture(_dofGatherBuffer, 1);
 		GPU::drawQuad();
+		GPU::endRender();
 	} else {
 		// Else just copy the input texture to our internal result.
-		GPU::bind(Load::Operation::DONTCARE, &_resultTexture);
+		GPU::beginRender(Load::Operation::DONTCARE, &_resultTexture);
 		GPU::setViewport(_resultTexture);
 		Resources::manager().getProgram2D("passthrough-pixelperfect")->use();
 		Resources::manager().getProgram2D("passthrough-pixelperfect")->texture(src, 0);
 		GPU::drawQuad();
+		GPU::endRender();
 	}
 
 	if(_settings.bloom) {
@@ -86,12 +90,13 @@ void PostProcessStack::process(const Texture& src, const glm::mat4 & proj, const
 		// --- Bloom selection pass ------
 		{
 			GPUMarker marker("Extraction");
-			GPU::bind(Load::Operation::DONTCARE, &_bloomBuffer);
+			GPU::beginRender(Load::Operation::DONTCARE, &_bloomBuffer);
 			GPU::setViewport(_bloomBuffer);
 			_bloomProgram->use();
 			_bloomProgram->uniform("luminanceTh", _settings.bloomTh);
 			_bloomProgram->texture(_resultTexture, 0);
 			GPU::drawQuad();
+			GPU::endRender();
 		}
 		
 		// --- Bloom blur pass ------
@@ -100,7 +105,7 @@ void PostProcessStack::process(const Texture& src, const glm::mat4 & proj, const
 		// Add back the scene content.
 		{
 			GPUMarker marker("Compositing");
-			GPU::bind(Load::Operation::LOAD, &_resultTexture);
+			GPU::beginRender(Load::Operation::LOAD, &_resultTexture);
 			GPU::setViewport(_resultTexture);
 			GPU::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE);
 			_bloomComposite->use();
@@ -108,6 +113,7 @@ void PostProcessStack::process(const Texture& src, const glm::mat4 & proj, const
 			_bloomComposite->texture(_bloomBuffer, 0);
 			GPU::drawQuad();
 			GPU::setBlendState(false);
+			GPU::endRender();
 		}
 		// Steps below ensures that we will always have an intermediate target.
 	}
@@ -115,23 +121,25 @@ void PostProcessStack::process(const Texture& src, const glm::mat4 & proj, const
 	// --- Tonemapping pass ------
 	{
 		GPUMarker marker("Tonemap");
-		GPU::bind(Load::Operation::DONTCARE, &_toneMapBuffer);
+		GPU::beginRender(Load::Operation::DONTCARE, &_toneMapBuffer);
 		GPU::setViewport(_toneMapBuffer);
 		_toneMappingProgram->use();
 		_toneMappingProgram->uniform("customExposure", _settings.exposure);
 		_toneMappingProgram->uniform("apply", _settings.tonemap);
 		_toneMappingProgram->texture(_resultTexture, 0);
 		GPU::drawQuad();
+		GPU::endRender();
 	}
 
 	if(_settings.fxaa) {
 		GPUMarker marker("FXAA");
-		GPU::bind(layer, 0, Load::Operation::LOAD, &dst);
+		GPU::beginRender(layer, 0, Load::Operation::LOAD, &dst);
 		GPU::setViewport(dst);
 		_fxaaProgram->use();
 		_fxaaProgram->uniform("inverseScreenSize", invRenderSize);
 		_fxaaProgram->texture(_toneMapBuffer, 0);
 		GPU::drawQuad();
+		GPU::endRender();
 	} else {
 		GPU::blit(_toneMapBuffer, dst, 0, layer, Filter::LINEAR);
 	}

@@ -352,11 +352,13 @@ void DeferredRenderer::draw(const Camera & camera, Texture* dstColor, Texture* d
 	{
 		GPUMarker marker("Gbuffer");
 		// Clear the depth buffer (we know we will draw everywhere, no need to clear color).
-		GPU::bind(Load::Operation::DONTCARE, 1.0f, Load::Operation::DONTCARE, &_sceneDepth, &_sceneAlbedo, &_sceneNormal, &_sceneEffects);
+		GPU::beginRender(Load::Operation::DONTCARE, 1.0f, Load::Operation::DONTCARE, &_sceneDepth, &_sceneAlbedo, &_sceneNormal, &_sceneEffects);
 		GPU::setViewport(_sceneDepth);
-
+		
 		renderOpaque(visibles, view, proj);
 		renderBackground(view, proj, pos);
+
+		GPU::endRender();
 	}
 
 	// SSAO pass
@@ -375,17 +377,18 @@ void DeferredRenderer::draw(const Camera & camera, Texture* dstColor, Texture* d
 	// Accumulate probe contributions.
 	{
 		GPUMarker marker("Probes lighting");
-		GPU::bind(glm::vec4(0.0f), &_indirectLighting);
+		GPU::beginRender(glm::vec4(0.0f), &_indirectLighting);
 		GPU::setViewport(_indirectLighting);
 		for(const LightProbe& probe : _scene->probes){
 			_probeRenderer->draw(probe);
 		}
+		GPU::endRender();
 	}
 
 
 	// Main lighting accumulation.
 	{
-		GPU::bind(Load::Operation::DONTCARE, Load::Operation::LOAD, Load::Operation::DONTCARE, &_depthCopy, &_lighting);
+		GPU::beginRender(Load::Operation::DONTCARE, Load::Operation::LOAD, Load::Operation::DONTCARE, &_depthCopy, &_lighting);
 		GPU::setViewport(_lighting);
 
 		// Merge probes contributions and background.
@@ -406,6 +409,8 @@ void DeferredRenderer::draw(const Camera & camera, Texture* dstColor, Texture* d
 		for(auto & light : _scene->lights) {
 			light->draw(*_lightRenderer);
 		}
+
+		GPU::endRender();
 	}
 
 	// If transparent objects are present, prepare the forward pass.
@@ -423,9 +428,10 @@ void DeferredRenderer::draw(const Camera & camera, Texture* dstColor, Texture* d
 		}
 		_fwdProbesGPU->data().upload();
 		// Now render transparent effects in a forward fashion.
-		GPU::bind(Load::Operation::LOAD, Load::Operation::LOAD, Load::Operation::DONTCARE, &_depthCopy, &_lighting);
+		GPU::beginRender(Load::Operation::LOAD, Load::Operation::LOAD, Load::Operation::DONTCARE, &_depthCopy, &_lighting);
 		GPU::setViewport(_lighting);
 		renderTransparent(visibles, view, proj);
+		GPU::endRender();
 	}
 
 	// Copy to the final texture.

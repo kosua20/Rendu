@@ -55,7 +55,7 @@ void ForwardRenderer::renderDepth(const Culler::List & visibles, const glm::mat4
 	GPU::setCullState(true, Faces::BACK);
 	GPU::setBlendState(false);
 
-	GPU::bind(glm::vec4(0.5f,0.5f,0.5f,1.0f), 1.0f, Load::Operation::DONTCARE, &_sceneDepth, &_sceneColor);
+	GPU::beginRender(glm::vec4(0.5f,0.5f,0.5f,1.0f), 1.0f, Load::Operation::DONTCARE, &_sceneDepth, &_sceneColor);
 	GPU::setViewport(_sceneColor);
 
 	// We use the depth prepass to store packed normals in the color target.
@@ -97,6 +97,7 @@ void ForwardRenderer::renderDepth(const Culler::List & visibles, const glm::mat4
 		GPU::setCullState(!material.twoSided(), Faces::BACK);
 		GPU::drawMesh(*object.mesh());
 	}
+	GPU::endRender();
 }
 
 void ForwardRenderer::renderOpaque(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj){
@@ -385,7 +386,7 @@ void ForwardRenderer::draw(const Camera & camera, Texture* dstColor, Texture* ds
 	}
 
 	// Objects rendering.
-	GPU::bind(glm::vec4(0.0f), 1.0f, Load::Operation::DONTCARE, &_sceneDepth, &_sceneColor);
+	GPU::beginRender(glm::vec4(0.0f), 1.0f, Load::Operation::DONTCARE, &_sceneDepth, &_sceneColor);
 	GPU::setViewport(_sceneColor);
 	// Render opaque objects.
 	renderOpaque(visibles, view, proj);
@@ -393,6 +394,7 @@ void ForwardRenderer::draw(const Camera & camera, Texture* dstColor, Texture* ds
 	renderBackground(view, proj, pos);
 	// Render transparent objects.
 	renderTransparent(visibles, view, proj);
+	GPU::endRender();
 
 	// Final composite pass
 	GPU::blit(_sceneColor, *dstColor, 0, layer, Filter::LINEAR);

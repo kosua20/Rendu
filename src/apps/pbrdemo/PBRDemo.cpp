@@ -123,7 +123,8 @@ void PBRDemo::draw() {
 	++_frameID;
 
 	if(!_scenes[_currentScene]) {
-		window().bind(glm::vec4(0.2f, 0.2f, 0.2f, 1.0f), 1.0f, Load::Operation::DONTCARE );
+		window().beginRender(glm::vec4(0.2f, 0.2f, 0.2f, 1.0f), 1.0f, Load::Operation::DONTCARE );
+		GPU::endRender();
 		return;
 	}
 
@@ -158,12 +159,13 @@ void PBRDemo::draw() {
 	GPU::setCullState(true, Faces::BACK);
 	GPU::setBlendState(false);
 
-	window().bind(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
+	window().beginRender(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
 	
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_finalProgram->use();
 	_finalProgram->texture(_finalRender, 0);
 	GPU::drawQuad();
+	GPU::endRender();
 
 	_totalTime.end();
 }
