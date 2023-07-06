@@ -222,7 +222,7 @@ void ShaderEditor::draw() {
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	GPU::bind(glm::vec4(0.0f), _currFrame);
+	GPU::beginRender(glm::vec4(0.0f), _currFrame);
 	GPU::setViewport(*_currFrame);
 	_currProgram->use();
 
@@ -275,16 +275,18 @@ void ShaderEditor::draw() {
 	_timer.begin();
 	GPU::drawQuad();
 	_timer.end();
+	
+	GPU::endRender();
 
-	window().bind(glm::vec4(0.3f,0.3f,0.3f, 1.0f));
+	window().beginRender(glm::vec4(0.3f,0.3f,0.3f, 1.0f));
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
-
 	// If not in window mode, directly blit to the screne.
 	if(!_windowed){
 		_passthrough->use();
 		_passthrough->texture(*_currFrame, 0);
 		GPU::drawQuad();
 	}
+	GPU::endRender();
 
 	std::swap(_currFrame, _prevFrame);
 	_textures[0] = _prevFrame;

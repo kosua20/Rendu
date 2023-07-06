@@ -48,7 +48,8 @@ void PathTracerApp::draw() {
 
 	// If no scene, just clear.
 	if(!_scene) {
-		window().bind(glm::vec4(0.2f, 0.2f, 0.2f, 1.0f), 1.0f);
+		window().beginRender(glm::vec4(0.2f, 0.2f, 0.2f, 1.0f), 1.0f);
+		GPU::endRender();
 		return;
 	}
 	
@@ -69,7 +70,7 @@ void PathTracerApp::draw() {
 		GPU::setBlendState(false);
 		GPU::setDepthState(false);
 		GPU::setCullState(true, Faces::BACK);
-		window().bind(Load::Operation::DONTCARE);
+		window().beginRender(Load::Operation::DONTCARE);
 		window().setViewport();
 		GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 		_passthrough->use();
@@ -77,6 +78,7 @@ void PathTracerApp::draw() {
 		_passthrough->uniform("customExposure", _exposure);
 		_passthrough->texture(_renderTex, 0);
 		GPU::drawQuad();
+		GPU::endRender();
 		return;
 	}
 	
@@ -86,12 +88,13 @@ void PathTracerApp::draw() {
 	GPU::setBlendState(false);
 	GPU::setDepthState(false);
 	GPU::setCullState(true, Faces::BACK);
-	window().bind(Load::Operation::DONTCARE);
+	window().beginRender(Load::Operation::DONTCARE);
 	window().setViewport();
 	_passthrough->use();
 	_passthrough->uniform("apply", false);
 	_passthrough->texture(_sceneColor, 0);
 	GPU::drawQuad();
+	GPU::endRender();
 }
 
 void PathTracerApp::update() {

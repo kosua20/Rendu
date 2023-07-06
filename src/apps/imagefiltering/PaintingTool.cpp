@@ -60,11 +60,9 @@ void PaintingTool::draw() {
 
 	// Clear if needed.
 	Load colorOp(glm::vec4(_bgColor, 1.0f));
-	GPU::bind(_shouldClear ? colorOp : Load::Operation::LOAD, &_canvas);
+	GPU::beginRender(_shouldClear ? colorOp : Load::Operation::LOAD, &_canvas);
 	GPU::setViewport(_canvas);
 	_shouldClear = false;
-
-
 	// Draw brush if needed.
 	const float radiusF = float(_radius);
 	if(_shouldDraw) {
@@ -79,12 +77,13 @@ void PaintingTool::draw() {
 		_brushShader->uniform("color", color);
 		GPU::drawMesh(_brushes[int(_shape)]);
 	}
+	GPU::endRender();
 
 	// Copy the canvas to the visualisation framebuffer.
 	GPU::blit(_canvas, _visu, Filter::NEAREST);
 
 	// Draw the brush outline.
-	GPU::bind(Load::Operation::LOAD, &_visu);
+	GPU::beginRender(Load::Operation::LOAD, &_visu);
 	GPU::setViewport(_visu);
 	_brushShader->use();
 
@@ -97,6 +96,7 @@ void PaintingTool::draw() {
 	_brushShader->uniform("radiusPx", radiusF);
 	_brushShader->uniform("color", white);
 	GPU::drawMesh(_brushes[int(_shape)]);
+	GPU::endRender();
 }
 
 void PaintingTool::update() {

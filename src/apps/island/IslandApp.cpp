@@ -173,17 +173,18 @@ void IslandApp::draw() {
 		_skyProgram->texture(_precomputedScattering, 0);
 
 		for(uint lid = 0; lid < 6; ++lid){
-			GPU::bind(lid, 0, Load::Operation::DONTCARE, &_environment);
+			GPU::beginRender(lid, 0, Load::Operation::DONTCARE, &_environment);
 			const glm::mat4 clipToWorldFace  = glm::inverse(Library::boxVPs[lid]);
 			_skyProgram->uniform("clipToWorld", clipToWorldFace);
 			GPU::drawMesh(*_skyMesh);
+			GPU::endRender();
 		}
 
 		_terrain->generateShadowMap(_lightDirection);
 		_shouldUpdateSky = false;
 	}
 
-	GPU::bind(glm::vec4(0.0f), 1.0f, Load::Operation::DONTCARE, &_sceneDepth, &_sceneColor, &_scenePosition);
+	GPU::beginRender(glm::vec4(0.0f), 1.0f, Load::Operation::DONTCARE, &_sceneDepth, &_sceneColor, &_scenePosition);
 	GPU::setViewport(_sceneColor);
 	
 	GPU::setDepthState(true, TestFunction::LESS, true);
@@ -258,6 +259,7 @@ void IslandApp::draw() {
 		_skyProgram->texture(_precomputedScattering, 0);
 		GPU::drawMesh(*_skyMesh);
 	}
+	GPU::endRender();
 
 	// Render the ocean.
 
@@ -277,7 +279,7 @@ void IslandApp::draw() {
 			GPU::setCullState(true, Faces::BACK);
 			GPU::setBlendState(false);
 
-			GPU::bind(Load::Operation::DONTCARE, &_waterEffectsHalf);
+			GPU::beginRender(Load::Operation::DONTCARE, &_waterEffectsHalf);
 			GPU::setViewport(_waterEffectsHalf);
 
 			_waterCopy->use();
@@ -287,12 +289,13 @@ void IslandApp::draw() {
 			_waterCopy->texture(_waveNormals, 3);
 			_waterCopy->uniform("time", time);
 			GPU::drawQuad();
+			GPU::endRender();
 
 			_blur.process(_waterEffectsHalf, _waterEffectsBlur);
 		}
 
 		// Render the ocean waves.
-		GPU::bind(Load::Operation::LOAD, Load::Operation::LOAD, Load::Operation::DONTCARE, &_sceneDepth, &_sceneColor, &_scenePosition);
+		GPU::beginRender(Load::Operation::LOAD, Load::Operation::LOAD, Load::Operation::DONTCARE, &_sceneDepth, &_sceneColor, &_scenePosition);
 		GPU::setViewport(_sceneColor);
 		GPU::setDepthState(true, TestFunction::LESS, true);
 		GPU::setBlendState(false);
@@ -338,12 +341,15 @@ void IslandApp::draw() {
 		}
 
 		if(isUnderwater){
+
+			GPU::endRender();
+
 			// We do the low-res copy and blur now, because we need the blurred ocean surface to be visible.
 			GPU::setCullState(true, Faces::BACK);
 			GPU::setDepthState(false);
 			GPU::setBlendState(false);
 
-			GPU::bind(Load::Operation::LOAD, &_waterEffectsHalf);
+			GPU::beginRender(Load::Operation::LOAD, &_waterEffectsHalf);
 			GPU::setViewport(_waterEffectsHalf);
 
 			_waterCopy->use();
@@ -353,13 +359,14 @@ void IslandApp::draw() {
 			_waterCopy->texture(_waveNormals, 3);
 			_waterCopy->uniform("time", time);
 			GPU::drawQuad();
+			GPU::endRender();
 
 			_blur.process(_waterEffectsHalf, _waterEffectsBlur);
 			// Blit full res position map.
 			GPU::blit(_scenePosition, _waterPos, 0, 0, Filter::NEAREST);
 
 			// Render full screen effect.
-			GPU::bind(Load::Operation::LOAD, &_sceneColor);
+			GPU::beginRender(Load::Operation::LOAD, &_sceneColor);
 			GPU::setViewport(_sceneColor);
 			GPU::setCullState(true, Faces::BACK);
 			GPU::setDepthState(false);
@@ -382,6 +389,7 @@ void IslandApp::draw() {
 			_underwaterProgram->texture(_environment, 6);
 			GPU::drawQuad();
 			GPU::setDepthState(true, TestFunction::LESS, true);
+			GPU::endRender();
 
 		} else {
 			// Far ocean, using a cylinder as support to cast rays intersecting the ocean plane.
@@ -423,6 +431,7 @@ void IslandApp::draw() {
 				GPU::drawMesh(_farOceanMesh);
 				GPU::setPolygonState(PolygonMode::FILL);
 			}
+			GPU::endRender();
 		}
 
 	}
@@ -432,7 +441,7 @@ void IslandApp::draw() {
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	window().bind(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
+	window().beginRender(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
 	window().setViewport();
 	
 	_tonemap->use();
@@ -440,6 +449,7 @@ void IslandApp::draw() {
 	_tonemap->uniform("apply", true);
 	_tonemap->texture(_sceneColor, 0);
 	GPU::drawQuad();
+	GPU::endRender();
 }
 
 void IslandApp::update() {

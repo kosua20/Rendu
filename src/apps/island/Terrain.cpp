@@ -413,7 +413,7 @@ void Terrain::generateShadowMap(const glm::vec3 & lightDir){
 	// Make sure light direction is normalized.
 	const glm::vec3 lDir = glm::normalize(lightDir);
 
-	GPU::bind(glm::vec4(0.0f), &_shadowMap);
+	GPU::beginRender(glm::vec4(0.0f), &_shadowMap);
 	GPU::setViewport(_shadowMap);
 	GPU::setDepthState(false);
 	GPU::setBlendState(false);
@@ -425,6 +425,7 @@ void Terrain::generateShadowMap(const glm::vec3 & lightDir){
 
 	prog->texture(map, 0);
 	GPU::drawQuad();
+	GPU::endRender();
 
 	// Post process shadow map.
 	_gaussBlur.process(_shadowMap, _shadowMap);

@@ -76,7 +76,7 @@ int main(int argc, char ** argv) {
 		}
 
 		// Render the background.
-		window.bind(glm::vec4(bgColor, 1.0f), 1.0f);
+		window.beginRender(glm::vec4(bgColor, 1.0f), 1.0f);
 		window.setViewport();
 
 		const glm::ivec2 screenSize = Input::manager().size();
@@ -134,6 +134,7 @@ int main(int argc, char ** argv) {
 				});
 			}
 		}
+		GPU::endRender();
 
 		// Interface.
 		ImGui::SetNextWindowPos(ImVec2(10, 10));
@@ -258,7 +259,7 @@ int main(int argc, char ** argv) {
 					const unsigned int outputHeight = isHorizontal ? imageInfos.width : imageInfos.height;
 					Texture outputTexture("Save output");
 					outputTexture.setupAsDrawable(format, outputWidth, outputHeight);
-					GPU::bind(glm::vec4(0.0f,0.0f,0.0f,1.0f), &outputTexture);
+					GPU::beginRender(glm::vec4(0.0f,0.0f,0.0f,1.0f), &outputTexture);
 					GPU::setViewport(outputTexture);
 
 					// Render the image in it.
@@ -276,6 +277,7 @@ int main(int argc, char ** argv) {
 					program->uniform("mouseShift", zeros);
 					program->texture(imageInfos, 0);
 					GPU::drawQuad();
+					GPU::endRender();
 
 					// Then save it to the given path.
 					GPU::saveTexture(outputTexture, destinationPath.substr(0, destinationPath.size() - 4), Image::Save::NONE);

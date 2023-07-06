@@ -35,7 +35,7 @@ void EditorRenderer::draw(const Camera & camera, Texture* dstColor, Texture* dst
 	// Draw the scene.
 	GPU::setDepthState(true, TestFunction::LESS, true);
 	GPU::setCullState(false);
-	GPU::bind(layer, 0, glm::vec4(0.0f), 1.0f, Load::Operation::DONTCARE, dstDepth, dstColor);
+	GPU::beginRender(layer, 0, glm::vec4(0.0f), 1.0f, Load::Operation::DONTCARE, dstDepth, dstColor);
 	GPU::setViewport(*dstColor);
 	
 	// Render all objects.
@@ -69,6 +69,7 @@ void EditorRenderer::draw(const Camera & camera, Texture* dstColor, Texture* dst
 	
 	GPU::setDepthState(false);
 	GPU::setCullState(true, Faces::BACK);
+	GPU::endRender();
 
 }
 

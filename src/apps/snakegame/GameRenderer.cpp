@@ -41,10 +41,10 @@ void GameRenderer::drawPlayer(const Player & player, Texture& dst) const {
 	const glm::vec2 invRenderSize = 1.0f / glm::vec2(dst.width, dst.height);
 
 	// --- Scene pass ------
-	GPU::bind(glm::vec4(0.0f), 1.0f, Load::Operation::DONTCARE, &_sceneDepth, &_sceneNormal, &_sceneMaterial);
+	GPU::beginRender(glm::vec4(0.0f), 1.0f, Load::Operation::DONTCARE, &_sceneDepth, &_sceneNormal, &_sceneMaterial);
 	GPU::setViewport(_sceneDepth);
-
 	drawScene(player);
+	GPU::endRender();
 
 	// --- SSAO pass ------
 	_ssaoPass->process(_playerCamera.projection(), _sceneDepth, _sceneNormal);
@@ -54,19 +54,21 @@ void GameRenderer::drawPlayer(const Player & player, Texture& dst) const {
 	GPU::setDepthState(false);
 
 	// --- Lighting pass ------
-	GPU::bind(Load::Operation::LOAD, &_lighting);
+	GPU::beginRender(Load::Operation::LOAD, &_lighting);
 	GPU::setViewport(_lighting);
 	_compositingProgram->use();
 	_compositingProgram->textures({&_sceneNormal, &_sceneMaterial, _ssaoPass->texture(), _cubemap});
 	GPU::drawQuad();
+	GPU::endRender();
 
 	// --- FXAA pass -------
-	GPU::bind(Load::Operation::LOAD, &dst);
+	GPU::beginRender(Load::Operation::LOAD, &dst);
 	GPU::setViewport(dst);
 	_fxaaProgram->use();
 	_fxaaProgram->uniform("inverseScreenSize", invRenderSize);
 	_fxaaProgram->texture(_lighting, 0);
 	GPU::drawQuad();
+	GPU::endRender();
 
 }
 

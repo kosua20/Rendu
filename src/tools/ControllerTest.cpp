@@ -265,8 +265,9 @@ int main(int argc, char ** argv) {
 		}
 
 		// Render nothing.
-		window.bind(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), Load::Operation::DONTCARE, Load::Operation::DONTCARE);
+		window.beginRender(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), Load::Operation::DONTCARE, Load::Operation::DONTCARE);
 		window.setViewport();
+		GPU::endRender();
 
 		// Set a fullscreen fixed window.
 		ImGui::SetNextWindowPos(ImVec2(0, 0));

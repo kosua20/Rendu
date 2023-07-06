@@ -100,7 +100,7 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 		for(uint i = 0; i < 6; ++i) {
 			Log::Info() << "." << std::flush;
 
-			GPU::bind(i, 0, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), &resultTexture);
+			GPU::beginRender(i, 0, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), &resultTexture);
 			// Clear texture slice.
 			GPU::setViewport(0, 0, int(w), int(h));
 
@@ -118,6 +118,7 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 			// Attach source cubemap and compute.
 			programCubemap->texture(&cubemapInfos, 0);
 			GPU::drawMesh(*mesh);
+			GPU::endRender();
 
 		}
 
@@ -171,13 +172,14 @@ void computeAndExportLookupTable(const int outputSide, const std::string & outpu
 	Texture bakingTexture("LUT");
 	bakingTexture.setupAsDrawable(Layout::RGBA32F, outputSide, outputSide);
 	const auto brdfProgram		 = Resources::manager().getProgram2D("brdf_sampler");
-	GPU::bind(glm::vec4(0.0f), &bakingTexture);
+	GPU::beginRender(glm::vec4(0.0f), &bakingTexture);
 	GPU::setViewport(bakingTexture);
 	GPU::setDepthState(false);
 	GPU::setBlendState(false);
 	GPU::setCullState(false);
 	brdfProgram->use();
 	GPU::drawQuad();
+	GPU::endRender();
 	GPU::saveTexture(bakingTexture, outputPath, Image::Save::NONE);
 }
 
@@ -351,7 +353,7 @@ int main(int argc, char ** argv) {
 		const glm::ivec2 screenSize = Input::manager().size();
 		const glm::mat4 mvp		   = camera.projection() * camera.view();
 
-		window.bind(glm::vec4(0.25f, 0.25f, 0.25f, 1.0f), 1.0f, Load::Operation::DONTCARE);
+		window.beginRender(glm::vec4(0.25f, 0.25f, 0.25f, 1.0f), 1.0f, Load::Operation::DONTCARE);
 		window.setViewport();
 
 		GPU::setDepthState(true, TestFunction::LESS, true);
@@ -376,9 +378,10 @@ int main(int argc, char ** argv) {
 			programToUse->uniform("mvp", mvp);
 			GPU::drawMesh(*mesh);
 		}
+		GPU::endRender();
 
 		// Render reference cubemap in the bottom right corner.
-		window.bind(Load::Operation::LOAD, 1.0f, Load::Operation::DONTCARE);
+		window.beginRender(Load::Operation::LOAD, 1.0f, Load::Operation::DONTCARE);
 		const float gizmoScale	   = 0.2f;
 		const glm::ivec2 gizmoSize = glm::ivec2(gizmoScale * glm::vec2(screenSize));
 		GPU::setViewport(0, screenSize[1] - gizmoSize[1], gizmoSize[0], gizmoSize[1]);
@@ -386,6 +389,7 @@ int main(int argc, char ** argv) {
 		program->texture(cubemapInfosDefault, 0);
 		program->uniform("mvp", mvp);
 		GPU::drawMesh(*mesh);
+		GPU::endRender();
 		
 	}
 

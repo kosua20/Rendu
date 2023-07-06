@@ -117,11 +117,12 @@ int main(int argc, char ** argv) {
 
 		// Render.
 		const glm::mat4 MVP = camera.projection() * camera.view();
-		window.bind(glm::vec4(0.04f, 0.09f, 0.07f, 1.0f), 1.0f, Load::Operation::DONTCARE);
+		window.beginRender(glm::vec4(0.04f, 0.09f, 0.07f, 1.0f), 1.0f, Load::Operation::DONTCARE);
 		window.setViewport();
 		program->use();
 		program->uniform("mvp", MVP);
 		GPU::drawMesh(*mesh);
+		GPU::endRender();
 
 		ImGui::Text("ImGui is functional!");
 		ImGui::SameLine();

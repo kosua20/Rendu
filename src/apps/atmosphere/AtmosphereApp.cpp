@@ -38,7 +38,7 @@ void AtmosphereApp::draw() {
 	GPU::setBlendState(false);
 	GPU::setCullState(false);
 
-	GPU::bind(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), &_atmosphereBuffer);
+	GPU::beginRender(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), &_atmosphereBuffer);
 	GPU::setViewport(_atmosphereBuffer);
 
 	_atmosphere->use();
@@ -62,15 +62,17 @@ void AtmosphereApp::draw() {
 	_atmosphere->uniform("atmoParams.sunAngularRadiusCos", _atmoParams.sunRadiusCos);
 	_atmosphere->texture(_scattering, 0);
 	GPU::drawQuad();
+	GPU::endRender();
 
 	// Tonemapping and final screen.
-	window().bind(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
+	window().beginRender(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
 	window().setViewport();
 	_tonemap->use();
 	_tonemap->uniform("customExposure", 1.0f);
 	_tonemap->uniform("apply", true);
 	_tonemap->texture(_atmosphereBuffer, 0);
 	GPU::drawQuad();
+	GPU::endRender();
 }
 
 void AtmosphereApp::update() {

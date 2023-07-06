@@ -107,18 +107,20 @@ void Game::draw(Window& window) {
 		_player->updateModels();
 		_inGameRenderer.drawPlayer(*_player, _gameResult);
 
-		window.bind(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
+		window.beginRender(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
 		window.setViewport();
 		_finalProgram->use();
 		_finalProgram->texture(_gameResult, 0);
 		GPU::drawQuad();
+		GPU::endRender();
 		
 	}
 
 	// Make sure we are rendering directly in the window.
-	window.bind(Load::Operation::LOAD, 1.0f);
+	window.beginRender(Load::Operation::LOAD, 1.0f);
 	const float renderRatio = float(_gameResult.height) / float(_gameResult.width);
 	_menuRenderer.drawMenu( _menus[_status], _config.screenResolution, renderRatio);
+	GPU::endRender();
 
 }
 

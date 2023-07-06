@@ -41,26 +41,28 @@ void FilteringApp::draw() {
 		GPU::setDepthState(true, TestFunction::LESS, true);
 		GPU::setBlendState(false);
 		GPU::setCullState(true, Faces::BACK);
-		GPU::bind(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f, Load::Operation::DONTCARE, &_sceneDepth, &_sceneColor);
+		GPU::beginRender(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f, Load::Operation::DONTCARE, &_sceneDepth, &_sceneColor);
 		GPU::setViewport(_sceneColor);
 
 		const glm::mat4 MVP = _userCamera.projection() * _userCamera.view();
 		_sceneShader->use();
 		_sceneShader->uniform("mvp", MVP);
 		GPU::drawMesh(*_mesh);
+		GPU::endRender();
 
 	} else if(_viewMode == View::IMAGE) {
 		GPU::setDepthState(false);
 		GPU::setBlendState(false);
 		GPU::setCullState(true, Faces::BACK);
 		Load colorOp(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-		GPU::bind(_image.width > 0 ? colorOp : Load::Operation::DONTCARE, &_sceneColor);
+		GPU::beginRender(_image.width > 0 ? colorOp : Load::Operation::DONTCARE, &_sceneColor);
 		GPU::setViewport(_sceneColor);
 		_passthrough->use();
 		if(_image.width > 0) {
 			_passthrough->texture(_image, 0);
 			GPU::drawQuad();
 		}
+		GPU::endRender();
 
 	} else {
 		_painter->draw();
@@ -102,11 +104,12 @@ void FilteringApp::draw() {
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 	
-	window().bind(Load::Operation::DONTCARE);
+	window().beginRender(Load::Operation::DONTCARE);
 	window().setViewport();
 	_passthrough->use();
 	_passthrough->texture(finalTexID, 0);
 	GPU::drawQuad();
+	GPU::endRender();
 }
 
 void FilteringApp::update() {
