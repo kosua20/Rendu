@@ -11,6 +11,9 @@
 #	include <Windows.h>
 #endif
 
+#define XXH_INLINE_ALL
+#include <xxhash/xxhash.h>
+
 // On Windows, we can notify both AMD and Nvidia drivers that we prefer discrete GPUs.
 #ifdef _WIN32
 extern "C" {
@@ -88,6 +91,15 @@ std::string System::timestamp(){
 	std::stringstream str;
 	str << std::put_time(&ltime, "%Y_%m_%d_%H_%M_%S");
 	return str.str();
+}
+
+
+uint64_t System::hash64(const void* data, size_t size){
+	return XXH3_64bits(data, size);
+}
+
+uint32_t System::hash32(const void* data, size_t size){
+	return XXH32(data, size, 0);
 }
 
 #ifdef _WIN32

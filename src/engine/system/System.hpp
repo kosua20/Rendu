@@ -48,6 +48,20 @@ public:
 	 */
 	static std::string timestamp();
 
+	/** Compute a 64 bits hash of the input data
+	 \param data the data to hash
+	 \param size the number of bytes of data to consider
+	 \return the computed hash
+	 */
+	static uint64_t hash64(const void* data, size_t size);
+
+	/** Compute a 32 bits hash of the input data
+	 \param data the data to hash
+	 \param size the number of bytes of data to consider
+	 \return the computed hash
+	 */
+	static uint32_t hash32(const void* data, size_t size);
+
 	/** Multi-threaded for-loop.
 		 \param low lower (included) bound
 		 \param high higher (excluded) bound

@@ -1,6 +1,8 @@
 #include "graphics/GPUTypes.hpp"
 #include "graphics/GPU.hpp"
 #include "graphics/GPUInternal.hpp"
+#include "system/System.hpp"
+
 #include <cstring>
 
 bool GPUState::RenderPass::isEquivalent(const RenderPass& other) const {
@@ -144,6 +146,25 @@ uint64_t GPUQuery::value(){
 }
 
 GPUMarker::GPUMarker(const std::string& label, const glm::vec4& color, GPUMarker::Type type, GPUMarker::Target target) : _type(type), _target(target){
+	createMarker(label, color);
+}
+
+GPUMarker::GPUMarker(const std::string& label, Type type, Target target) : _type(type), _target(target) {
+	const uint32_t hash = System::hash32(label.data(), label.size());
+	// Basic hash to color conversion, putting more emphasis on the hue.
+	float hue 		= (float)((hash & 0x0000ffff)	   )/65535.f;
+	float saturation 	= (float)((hash & 0x00ff0000) >> 16)/ 255.0f;
+	float value 		= (float)((hash & 0xff000000) >> 24)/ 255.0f;
+	// Use the same ranges as in random color generation (see Random.cpp)
+	hue *= 360.0f;
+	saturation = saturation * 0.45f + 0.5f;
+	value = value * 0.45f + 0.5f;
+
+	const glm::vec3 color = glm::rgbColor(glm::vec3(hue , saturation, value));
+	createMarker(label, glm::vec4(color, 1.f));
+}
+
+void GPUMarker::createMarker(const std::string& label, const glm::vec4& color){
 	GPUContext* context = GPU::getInternal();
 	if(!context->markersEnabled){
 		return;
@@ -165,8 +186,6 @@ GPUMarker::GPUMarker(const std::string& label, const glm::vec4& color, GPUMarker
 		vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &labelInfo);
 	}
 }
-
-GPUMarker::GPUMarker(const std::string& label, Type type, Target target) : GPUMarker(label, glm::vec4(1.f), type, target) {}
 
 GPUMarker::~GPUMarker(){
 	GPUContext* context = GPU::getInternal();

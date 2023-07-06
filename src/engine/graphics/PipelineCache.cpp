@@ -4,9 +4,7 @@
 #include "graphics/PipelineCache.hpp"
 
 #include "resources/ResourcesManager.hpp"
-
-#define XXH_INLINE_ALL
-#include <xxhash/xxhash.h>
+#include "system/System.hpp"
 
 #define PIPELINE_CACHE_FILE "pipeline_cache_vulkan.bin"
 
@@ -28,7 +26,7 @@ void PipelineCache::init(){
 
 VkPipeline PipelineCache::getGraphicsPipeline(const GPUState & state){
 	// Compute the hash (used in all cases).
-	const uint64_t hash = XXH3_64bits(&state, offsetof(GPUState, sentinel));
+	const uint64_t hash = System::hash64(&state, offsetof(GPUState, sentinel));
 
 	// First check if we already have pipelines for the current program.
 	auto sameProgramPipelinesIt = _graphicPipelines.find(state.graphicsProgram);
