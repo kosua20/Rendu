@@ -32,7 +32,7 @@ void VarianceShadowMap2DArray::draw(const Scene & scene) {
 			continue;
 		}
 
-		GPU::bind(lid , 0, glm::vec4(1.0f), 1.0f, Load::Operation::DONTCARE, &_mapDepth, &_map);
+		GPU::beginRender(lid , 0, glm::vec4(1.0f), 1.0f, Load::Operation::DONTCARE, &_mapDepth, &_map);
 
 		const Frustum lightFrustum(light->vp());
 
@@ -55,6 +55,7 @@ void VarianceShadowMap2DArray::draw(const Scene & scene) {
 			_program->uniform("mvp", lightMVP);
 			GPU::drawMesh(*(object.mesh()));
 		}
+		GPU::endRender();
 	}
 	
 	// Apply box blur.
@@ -97,7 +98,7 @@ void VarianceShadowMapCubeArray::draw(const Scene & scene) {
 		_program->uniform("lightFarPlane", light->farPlane());
 		for(uint i = 0; i < 6; ++i){
 			// We render each face sequentially, culling objects that are not visible.
-			GPU::bind(lid * 6 + i, 0, glm::vec4(1.0f), 1.0f, Load::Operation::DONTCARE, &_mapDepth, &_map);
+			GPU::beginRender(lid * 6 + i, 0, glm::vec4(1.0f), 1.0f, Load::Operation::DONTCARE, &_mapDepth, &_map);
 			const Frustum lightFrustum(faces[i]);
 
 			for(auto & object : scene.objects) {
@@ -119,6 +120,7 @@ void VarianceShadowMapCubeArray::draw(const Scene & scene) {
 				}
 				GPU::drawMesh(*(object.mesh()));
 			}
+			GPU::endRender();
 		}
 	}
 	// Apply box blur.

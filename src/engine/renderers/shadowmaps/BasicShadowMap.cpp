@@ -28,7 +28,7 @@ void BasicShadowMap2DArray::draw(const Scene & scene) {
 		if(!light->castsShadow()){
 			continue;
 		}
-		GPU::bind(lid, 0, 1.f, Load::Operation::DONTCARE, &_map);
+		GPU::beginRender(lid, 0, 1.f, Load::Operation::DONTCARE, &_map);
 		const Frustum lightFrustum(light->vp());
 
 		for(auto & object : scene.objects) {
@@ -50,6 +50,7 @@ void BasicShadowMap2DArray::draw(const Scene & scene) {
 			_program->uniform("mvp", lightMVP);
 			GPU::drawMesh(*(object.mesh()));
 		}
+		GPU::endRender();
 	}
 
 }
@@ -85,7 +86,7 @@ void BasicShadowMapCubeArray::draw(const Scene & scene) {
 		_program->uniform("lightFarPlane", light->farPlane());
 		for(uint i = 0; i < 6; ++i){
 			// We render each face sequentially, culling objects that are not visible.
-			GPU::bind(lid * 6 + i, 0, 1.f, Load::Operation::DONTCARE, &_map);
+			GPU::beginRender(lid * 6 + i, 0, 1.f, Load::Operation::DONTCARE, &_map);
 			const Frustum lightFrustum(faces[i]);
 
 			for(auto & object : scene.objects) {
@@ -107,6 +108,7 @@ void BasicShadowMapCubeArray::draw(const Scene & scene) {
 				}
 				GPU::drawMesh(*(object.mesh()));
 			}
+			GPU::endRender();
 		}
 	}
 }

@@ -45,7 +45,7 @@ void ConvolutionPyramid::process(const Texture& texture) {
 	GPU::setCullState(true, Faces::BACK);
 	
 	// Pad by the size of the filter.
-	GPU::bind(glm::vec4(0.0f), &_levelsIn[0]);
+	GPU::beginRender(glm::vec4(0.0f), &_levelsIn[0]);
 	// Shift the viewport and fill the padded region with 0s.
 	GPU::setViewport(_size, _size, int(_levelsIn[0].width) - 2 * _size, int(_levelsIn[0].height) - 2 * _size);
 	// Transfer the boundary content.
@@ -53,6 +53,7 @@ void ConvolutionPyramid::process(const Texture& texture) {
 	_padder->uniform("padding", _size);
 	_padder->texture(texture, 0);
 	GPU::drawQuad();
+	GPU::endRender();
 
 	// Then iterate over all levels, cascading down the filtered results.
 	/// \note Those filters are separable, and could be applied in two passes (vertical and horizontal) to reduce the texture fetches count.
@@ -66,12 +67,13 @@ void ConvolutionPyramid::process(const Texture& texture) {
 
 	// Do: l[i] = downscale(filter(l[i-1], h1))
 	for(size_t i = 1; i < _levelsIn.size(); ++i) {
-		GPU::bind(glm::vec4(0.0f), &_levelsIn[i]);
+		GPU::beginRender(glm::vec4(0.0f), &_levelsIn[i]);
 		// Shift the viewport and fill the padded region with 0s.
 		GPU::setViewport(_size, _size, int(_levelsIn[i].width) - 2 * _size, int(_levelsIn[i].height) - 2 * _size);
 		// Filter and downscale.
 		_downscale->texture(_levelsIn[i - 1], 0);
 		GPU::drawQuad();
+		GPU::endRender();
 	}
 
 	// Filter the last level with g.
@@ -83,10 +85,11 @@ void ConvolutionPyramid::process(const Texture& texture) {
 
 	// Do:  f[end] = filter(l[end], g)
 	const auto & lastLevel = _levelsOut.back();
-	GPU::bind(Load::Operation::DONTCARE, &lastLevel);
+	GPU::beginRender(Load::Operation::DONTCARE, &lastLevel);
 	GPU::setViewport(lastLevel);
 	_filter->texture(_levelsIn.back(), 0);
 	GPU::drawQuad();
+	GPU::endRender();
 
 	// Flatten the pyramid from the bottom, combining the filtered current result and the next level.
 	_upscale->use();
@@ -102,22 +105,24 @@ void ConvolutionPyramid::process(const Texture& texture) {
 
 	// Do: f[i] = filter(l[i], g) + filter(upscale(f[i+1], h2)
 	for(int i = int(_levelsOut.size() - 2); i >= 0; --i) {
-		GPU::bind(Load::Operation::DONTCARE, &_levelsOut[i]);
+		GPU::beginRender(Load::Operation::DONTCARE, &_levelsOut[i]);
 		GPU::setViewport(_levelsOut[i]);
 		// Upscale with zeros, filter and combine.
 		_upscale->texture(_levelsIn[i], 0);
 		_upscale->texture(_levelsOut[i + 1], 1);
 		GPU::drawQuad();
+		GPU::endRender();
 	}
 
 	// Compensate the initial padding.
-	GPU::bind(Load::Operation::DONTCARE, &_shifted);
+	GPU::beginRender(Load::Operation::DONTCARE, &_shifted);
 	GPU::setViewport(_shifted);
 	_padder->use();
 	// Need to also compensate for the potential extra padding.
 	_padder->uniform("padding", -_size - _padding);
 	_padder->texture(_levelsOut[0], 0);
 	GPU::drawQuad();
+	GPU::endRender();
 }
 
 void ConvolutionPyramid::setFilters(const float h1[5], float h2, const float g[3]) {

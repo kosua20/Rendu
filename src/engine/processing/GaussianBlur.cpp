@@ -36,31 +36,34 @@ void GaussianBlur::process(const Texture& src, Texture & dst) {
 	}
 
 	// First, copy the input texture to the first texture level.
-	GPU::bind(Load::Operation::DONTCARE, &_levels[0]);
+	GPU::beginRender(Load::Operation::DONTCARE, &_levels[0]);
 	GPU::setViewport(_levels[0]);
 
 	_passthrough->use();
 	_passthrough->texture(src, 0);
 	GPU::drawQuad();
+	GPU::endRender();
 
 	// Downscale filter.
 	_blurProgramDown->use();
 	for(size_t d = 1; d < _levels.size(); ++d) {
 		GPUMarker marker("Blur down");
-		GPU::bind(glm::vec4(0.0f), &_levels[d]);
+		GPU::beginRender(glm::vec4(0.0f), &_levels[d]);
 		GPU::setViewport(_levels[d]);
 		_blurProgramDown->texture(_levels[d - 1], 0);
 		GPU::drawQuad();
+		GPU::endRender();
 	}
 
 	// Upscale filter.
 	_blurProgramUp->use();
 	for(int d = int(_levels.size()) - 2; d >= 0; --d) {
 		GPUMarker marker("Blur up");
-		GPU::bind(glm::vec4(0.0f), &_levels[d]);
+		GPU::beginRender(glm::vec4(0.0f), &_levels[d]);
 		GPU::setViewport(_levels[d]);
 		_blurProgramUp->texture(_levels[d + 1], 0);
 		GPU::drawQuad();
+		GPU::endRender();
 	}
 	// Copy from the last texture used to the destination.
 	GPU::blit(_levels[0], dst, Filter::LINEAR);

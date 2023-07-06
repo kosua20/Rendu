@@ -26,12 +26,13 @@ void LaplacianIntegrator::process(const Texture& texture) {
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	GPU::bind(glm::vec4(0.0f), &_preproc);
+	GPU::beginRender(glm::vec4(0.0f), &_preproc);
 	GPU::setViewport(_preproc);
 	_prepare->use();
 	_prepare->uniform("scale", _scale);
 	_prepare->texture(texture, 0);
 	GPU::drawQuad();
+	GPU::endRender();
 
 	// Run the convolutional pyramid filter.
 	_pyramid.process(_preproc);
@@ -41,11 +42,12 @@ void LaplacianIntegrator::process(const Texture& texture) {
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	GPU::bind(Load::Operation::DONTCARE, &_compo);
+	GPU::beginRender(Load::Operation::DONTCARE, &_compo);
 	GPU::setViewport(_compo);
 	_composite->use();
 	_composite->texture(_pyramid.texture(), 0);
 	GPU::drawQuad();
+	GPU::endRender();
 }
 
 void LaplacianIntegrator::resize(uint width, uint height) {

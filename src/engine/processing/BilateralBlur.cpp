@@ -29,16 +29,17 @@ void BilateralBlur::process(const glm::mat4 & projection, const Texture& src, co
 	_filter->uniform("projParams", glm::vec2( projection[2][2], projection[3][2]));
 
 	GPU::setViewport(_intermediate);
-	GPU::bind(Load::Operation::DONTCARE, &_intermediate);
+	GPU::beginRender(Load::Operation::DONTCARE, &_intermediate);
 	_filter->uniform("axis", 0);
 	_filter->texture(src, 0);
 	GPU::drawQuad();
+	GPU::endRender();
 
-	GPU::bind(Load::Operation::DONTCARE, &dst);
-
+	GPU::beginRender(Load::Operation::DONTCARE, &dst);
 	_filter->uniform("axis", 1);
 	_filter->texture(_intermediate, 0);
 	GPU::drawQuad();
+	GPU::endRender();
 }
 
 void BilateralBlur::resize(uint width, uint height) {

@@ -35,30 +35,36 @@ void BoxBlur::process(const Texture& src, Texture & dst) {
 	const TextureShape & tgtShape = dst.shape;
 	if(tgtShape == TextureShape::D2){
 		_blur2D->use();
-		GPU::bind(Load::Operation::DONTCARE, &_intermediate);
+		GPU::beginRender(Load::Operation::DONTCARE, &_intermediate);
 		_blur2D->texture(src, 0);
 		GPU::drawQuad();
+		GPU::endRender();
+
 		GPU::blit(_intermediate, dst, Filter::NEAREST);
 
 	} else if(tgtShape == TextureShape::Array2D){
 		_blurArray->use();
 		for(size_t lid = 0; lid < dst.depth; ++lid){
-			GPU::bind(Load::Operation::DONTCARE, &_intermediate);
+			GPU::beginRender(Load::Operation::DONTCARE, &_intermediate);
 			_blurArray->uniform("layer", int(lid));
 			_blurArray->texture(src, 0);
 			GPU::drawQuad();
+			GPU::endRender();
+
 			GPU::blit(_intermediate, dst, 0, lid, Filter::NEAREST);
 		}
 	} else if(tgtShape == TextureShape::Cube){
 		_blurCube->use();
 		_blurCube->uniform("invHalfSize", 2.0f/float(src.width));
 		for(size_t fid = 0; fid < 6; ++fid){
-			GPU::bind(Load::Operation::DONTCARE, &_intermediate);
+			GPU::beginRender(Load::Operation::DONTCARE, &_intermediate);
 			_blurCube->uniform("up", Library::boxUps[fid]);
 			_blurCube->uniform("right", Library::boxRights[fid]);
 			_blurCube->uniform("center", Library::boxCenters[fid]);
 			_blurCube->texture(src, 0);
 			GPU::drawQuad();
+			GPU::endRender();
+
 			GPU::blit(_intermediate, dst, 0, fid, Filter::NEAREST);
 		}
 	} else if(tgtShape == TextureShape::ArrayCube){
@@ -66,13 +72,15 @@ void BoxBlur::process(const Texture& src, Texture & dst) {
 		_blurCubeArray->uniform("invHalfSize", 2.0f/float(src.width));
 		for(size_t lid = 0; lid < src.depth; ++lid){
 			const int fid = int(lid)%6;
-			GPU::bind(Load::Operation::DONTCARE, &_intermediate);
+			GPU::beginRender(Load::Operation::DONTCARE, &_intermediate);
 			_blurCubeArray->uniform("layer", int(lid)/6);
 			_blurCubeArray->uniform("up", Library::boxUps[fid]);
 			_blurCubeArray->uniform("right", Library::boxRights[fid]);
 			_blurCubeArray->uniform("center", Library::boxCenters[fid]);
 			_blurCubeArray->texture(src, 0);
 			GPU::drawQuad();
+			GPU::endRender();
+			
 			GPU::blit(_intermediate, dst, 0, lid, Filter::NEAREST);
 		}
 	} else {

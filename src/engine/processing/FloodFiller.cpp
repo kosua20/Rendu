@@ -24,7 +24,7 @@ void FloodFiller::process(const Texture& texture, Output mode) {
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	GPU::bind(Load::Operation::DONTCARE, &_final);
+	GPU::beginRender(Load::Operation::DONTCARE, &_final);
 	GPU::setViewport(_final);
 
 	if(mode == Output::COLOR) {
@@ -37,6 +37,7 @@ void FloodFiller::process(const Texture& texture, Output mode) {
 		_compositeDist->texture(*result, 0);
 		GPU::drawQuad();
 	}
+	GPU::endRender();
 
 }
 
@@ -46,11 +47,12 @@ Texture* FloodFiller::extractAndPropagate(const Texture& texture) {
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	GPU::bind(Load::Operation::DONTCARE, &_ping);
+	GPU::beginRender(Load::Operation::DONTCARE, &_ping);
 	GPU::setViewport(_ping);
 	_extract->use();
 	_extract->texture(texture, 0);
 	GPU::drawQuad();
+	GPU::endRender();
 
 	Texture* result = &_ping;
 	// Propagate closest seeds with decreasing step size.
@@ -60,11 +62,13 @@ Texture* FloodFiller::extractAndPropagate(const Texture& texture) {
 
 		Texture* src = (i%2 == 0) ? &_ping : &_pong;
 		Texture* dst = (i%2 == 0) ? &_pong : &_ping;
-		GPU::bind(Load::Operation::DONTCARE, dst);
+		GPU::beginRender(Load::Operation::DONTCARE, dst);
 		GPU::setViewport(*dst);
 		_floodfill->uniform("stepDist", step);
 		_floodfill->texture(*src, 0);
 		GPU::drawQuad();
+		GPU::endRender();
+
 		result = dst;
 	}
 	return result;

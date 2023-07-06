@@ -69,7 +69,7 @@ void SSAO::process(const glm::mat4 & projection, const Texture& depthTex, const 
 
 	{
 		GPUMarker marker("Computation");
-		GPU::bind(Load::Operation::DONTCARE, &_ssaoTexture);
+		GPU::beginRender(Load::Operation::DONTCARE, &_ssaoTexture);
 		GPU::setViewport(_ssaoTexture);
 
 		_programSSAO->use();
@@ -80,6 +80,7 @@ void SSAO::process(const glm::mat4 & projection, const Texture& depthTex, const 
 		_programSSAO->texture(normalTex, 1);
 		_programSSAO->texture(_noisetexture, 2);
 		GPU::drawQuad();
+		GPU::endRender();
 	}
 
 	// Blurring pass

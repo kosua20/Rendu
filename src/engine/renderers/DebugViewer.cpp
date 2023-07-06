@@ -493,7 +493,7 @@ void DebugViewer::updateDisplay(const TextureInfos & tex) {
 		{TextureShape::ArrayCube, 5},
 		{TextureShape::D3, 6}};
 
-	GPU::bind(Load::Operation::DONTCARE, tex.display.get());
+	GPU::beginRender(Load::Operation::DONTCARE, tex.display.get());
 	GPU::setViewport(*tex.display);
 
 	_texDisplay->use();
@@ -513,6 +513,7 @@ void DebugViewer::updateDisplay(const TextureInfos & tex) {
 	}
 
 	GPU::drawQuad();
+	GPU::endRender();
 }
 
 void DebugViewer::setDefault(DebugViewer * viewer) {
