@@ -48,7 +48,7 @@ public:
 	 \param depthOp the operation for the depth backbuffer (if it exists)
 	 \param stencilOp the operation for the stencil backbuffer (if it exists)
 	 */
-	void bind(const Load& colorOp, const Load& depthOp = Load::Operation::DONTCARE, const Load& stencilOp = Load::Operation::DONTCARE);
+	void beginRender(const Load& colorOp, const Load& depthOp = Load::Operation::DONTCARE, const Load& stencilOp = Load::Operation::DONTCARE);
 
 	/** Set the viewport to the window dimensions */
 	void setViewport();

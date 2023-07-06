@@ -106,7 +106,8 @@ struct GPUContext {
 	const uint frameCount = 2; ///< Number of buffered frames (should be lower or equal to the swapchain image count).
 	bool newRenderPass = true; ///< Has a render pass just started (pipeline needs to be re-bound).
 	bool hadRenderPass = false; ///< Has a render pass just ended.
-	bool markersEnabled = false;
+	bool inRenderPass = false; ///< Is a rendering pass currently active.
+	bool markersEnabled = false; ///< Are debug markers and labels enabled.
 
 	/// Move to the next frame.
 	void nextFrame(){

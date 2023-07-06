@@ -101,7 +101,7 @@ public:
 	 \param color2 the third color attachment (optional)
 	 \param color3 the fourth color attachment (optional)
 	 */
-	static void bind(const Load& colorOp, const Load& depthOp, const Load& stencilOp, const Texture* depthStencil, const Texture* color0 = nullptr, const Texture* color1 = nullptr, const Texture* color2 = nullptr, const Texture* color3 = nullptr);
+	static void beginRender(const Load& colorOp, const Load& depthOp, const Load& stencilOp, const Texture* depthStencil, const Texture* color0 = nullptr, const Texture* color1 = nullptr, const Texture* color2 = nullptr, const Texture* color3 = nullptr);
 
 	/** Begin rendering to a set of textures set as attachments.
 	 \param colorOp the operation to perform on the color attachments
@@ -110,14 +110,14 @@ public:
 	 \param color2 the third color attachment (optional)
 	 \param color3 the fourth color attachment (optional)
 	 */
-	static void bind(const Load& colorOp, const Texture* color0, const Texture* color1 = nullptr, const Texture* color2 = nullptr, const Texture* color3 = nullptr);
+	static void beginRender(const Load& colorOp, const Texture* color0, const Texture* color1 = nullptr, const Texture* color2 = nullptr, const Texture* color3 = nullptr);
 
 	/** Begin rendering to a set of textures set as attachments.
 	 \param depthOp the operation to perform on the depth attachment
 	 \param stencilOp the operation to perform on the stencil attachment
 	 \param depthStencil the depth/stencil attachment
 	 */
-	static void bind(const Load& depthOp, const Load& stencilOp, const Texture* depthStencil);
+	static void beginRender(const Load& depthOp, const Load& stencilOp, const Texture* depthStencil);
 
 	/** Begin rendering to a set of textures set as attachments.
 	 \param layer the texture layer to bind
@@ -131,7 +131,7 @@ public:
 	 \param color2 the third color attachment (optional)
 	 \param color3 the fourth color attachment (optional)
 	 */
-	static void bind(uint layer, uint mip, const Load& colorOp, const Load& depthOp, const Load& stencilOp, const Texture* depthStencil, const Texture* color0 = nullptr, const Texture* color1 = nullptr, const Texture* color2 = nullptr, const Texture* color3 = nullptr);
+	static void beginRender(uint layer, uint mip, const Load& colorOp, const Load& depthOp, const Load& stencilOp, const Texture* depthStencil, const Texture* color0 = nullptr, const Texture* color1 = nullptr, const Texture* color2 = nullptr, const Texture* color3 = nullptr);
 
 	/** Begin rendering to a set of textures set as attachments.
 	 \param layer the texture layer to bind
@@ -142,7 +142,7 @@ public:
 	 \param color2 the third color attachment (optional)
 	 \param color3 the fourth color attachment (optional)
 	 */
-	static void bind(uint layer, uint mip, const Load& colorOp, const Texture* color0, const Texture* color1 = nullptr, const Texture* color2 = nullptr, const Texture* color3 = nullptr);
+	static void beginRender(uint layer, uint mip, const Load& colorOp, const Texture* color0, const Texture* color1 = nullptr, const Texture* color2 = nullptr, const Texture* color3 = nullptr);
 
 	/** Begin rendering to a set of textures set as attachments.
 	 \param layer the texture layer to bind
@@ -151,7 +151,10 @@ public:
 	 \param stencilOp the operation to perform on the stencil attachment
 	 \param depthStencil the depth/stencil attachment
 	 */
-	static void bind(uint layer, uint mip, const Load& depthOp, const Load& stencilOp, const Texture* depthStencil);
+	static void beginRender(uint layer, uint mip, const Load& depthOp, const Load& stencilOp, const Texture* depthStencil);
+
+	/** End a rendering pass, detach the current attached textures. */
+	static void endRender();
 
 	/** Save a given texture content to the disk.
 	 \param texture the texture to save
