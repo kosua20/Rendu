@@ -65,7 +65,7 @@ void AtmosphereApp::draw() {
 	GPU::endRender();
 
 	// Tonemapping and final screen.
-	window().beginRender(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
+	GPU::beginRender(window());
 	window().setViewport();
 	_tonemap->use();
 	_tonemap->uniform("customExposure", 1.0f);

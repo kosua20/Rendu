@@ -117,7 +117,7 @@ int main(int argc, char ** argv) {
 
 		// Render.
 		const glm::mat4 MVP = camera.projection() * camera.view();
-		window.beginRender(glm::vec4(0.04f, 0.09f, 0.07f, 1.0f), 1.0f, Load::Operation::DONTCARE);
+		GPU::beginRender(window, 1.0f, Load::Operation::DONTCARE, glm::vec4(0.04f, 0.09f, 0.07f, 1.0f));
 		window.setViewport();
 		program->use();
 		program->uniform("mvp", MVP);

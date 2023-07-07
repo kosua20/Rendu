@@ -53,7 +53,7 @@ void StenciledApp::setScene(const std::shared_ptr<Scene> & scene) {
 
 void StenciledApp::draw() {
 	if(!_scenes[_currentScene]) {
-		window().beginRender(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, Load::Operation::DONTCARE);
+		GPU::beginRender(window(), 1.0f, Load::Operation::DONTCARE, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 		GPU::endRender();
 		return;
 	}

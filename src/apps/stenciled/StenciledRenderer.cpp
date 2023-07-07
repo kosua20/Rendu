@@ -38,7 +38,7 @@ void StenciledRenderer::draw(const Camera & camera, Texture* dstColor, Texture* 
 	GPU::setCullState(true, Faces::BACK);
 	GPU::setBlendState(false);
 
-	GPU::beginRender(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, (uchar)0x0, &_sceneDepth, &_sceneColor);
+	GPU::beginRender(1.0f, (uchar)0x0, &_sceneDepth, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), &_sceneColor);
 	GPU::setViewport(_sceneDepth);
 
 	// Clear colorbuffer to white, don't write to it for now.

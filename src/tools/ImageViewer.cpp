@@ -76,7 +76,7 @@ int main(int argc, char ** argv) {
 		}
 
 		// Render the background.
-		window.beginRender(glm::vec4(bgColor, 1.0f), 1.0f);
+		GPU::beginRender(window, 1.0f, Load::Operation::DONTCARE, glm::vec4(bgColor, 1.0f));
 		window.setViewport();
 
 		const glm::ivec2 screenSize = Input::manager().size();

@@ -265,7 +265,7 @@ int main(int argc, char ** argv) {
 		}
 
 		// Render nothing.
-		window.beginRender(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), Load::Operation::DONTCARE, Load::Operation::DONTCARE);
+		GPU::beginRender(window, Load::Operation::DONTCARE, Load::Operation::DONTCARE, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 		window.setViewport();
 		GPU::endRender();
 

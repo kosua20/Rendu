@@ -54,7 +54,7 @@ void SceneEditor::draw() {
 
 	// If no scene, just clear.
 	if(!_scenes[_currentScene]) {
-		window().beginRender(glm::vec4(0.2f, 0.2f, 0.2f, 1.0f), 1.0f, Load::Operation::DONTCARE);
+		GPU::beginRender(window(),  1.0f, Load::Operation::DONTCARE, glm::vec4(0.2f, 0.2f, 0.2f, 1.0f));
 		GPU::endRender();
 		return;
 	}
@@ -62,7 +62,7 @@ void SceneEditor::draw() {
 	_renderer.draw(_userCamera, &_sceneColor, &_sceneDepth);
 
 	// We now render a full screen quad in the default backbuffer, using sRGB space.
-	window().beginRender(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
+	GPU::beginRender(window());
 	window().setViewport();
 	_passthrough->use();
 	_passthrough->texture(_sceneColor, 0);

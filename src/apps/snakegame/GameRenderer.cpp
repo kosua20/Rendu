@@ -41,7 +41,7 @@ void GameRenderer::drawPlayer(const Player & player, Texture& dst) const {
 	const glm::vec2 invRenderSize = 1.0f / glm::vec2(dst.width, dst.height);
 
 	// --- Scene pass ------
-	GPU::beginRender(glm::vec4(0.0f), 1.0f, Load::Operation::DONTCARE, &_sceneDepth, &_sceneNormal, &_sceneMaterial);
+	GPU::beginRender(1.0f, Load::Operation::DONTCARE, &_sceneDepth, glm::vec4(0.0f), &_sceneNormal, &_sceneMaterial);
 	GPU::setViewport(_sceneDepth);
 	drawScene(player);
 	GPU::endRender();

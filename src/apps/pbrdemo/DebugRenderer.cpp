@@ -102,7 +102,7 @@ void DebugRenderer::draw(const Camera & camera, Texture* dstColor, Texture* dstD
 
 	_lightDebugRenderer.updateCameraInfos(view, proj);
 
-	GPU::beginRender(layer, 0, Load::Operation::LOAD, Load::Operation::LOAD, Load::Operation::LOAD, dstDepth, dstColor);
+	GPU::beginRender(layer, 0, Load::Operation::LOAD, Load::Operation::LOAD, dstDepth, Load::Operation::LOAD, dstColor);
 	GPU::setViewport(*dstColor);
 	
 	GPU::setDepthState(true, TestFunction::LEQUAL, true);

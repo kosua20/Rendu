@@ -184,7 +184,7 @@ void IslandApp::draw() {
 		_shouldUpdateSky = false;
 	}
 
-	GPU::beginRender(glm::vec4(0.0f), 1.0f, Load::Operation::DONTCARE, &_sceneDepth, &_sceneColor, &_scenePosition);
+	GPU::beginRender(1.0f, Load::Operation::DONTCARE, &_sceneDepth, glm::vec4(0.0f), &_sceneColor, &_scenePosition);
 	GPU::setViewport(_sceneColor);
 	
 	GPU::setDepthState(true, TestFunction::LESS, true);
@@ -295,7 +295,7 @@ void IslandApp::draw() {
 		}
 
 		// Render the ocean waves.
-		GPU::beginRender(Load::Operation::LOAD, Load::Operation::LOAD, Load::Operation::DONTCARE, &_sceneDepth, &_sceneColor, &_scenePosition);
+		GPU::beginRender(Load::Operation::LOAD, Load::Operation::DONTCARE, &_sceneDepth, Load::Operation::LOAD, &_sceneColor, &_scenePosition);
 		GPU::setViewport(_sceneColor);
 		GPU::setDepthState(true, TestFunction::LESS, true);
 		GPU::setBlendState(false);
@@ -441,7 +441,7 @@ void IslandApp::draw() {
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	window().beginRender(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
+	GPU::beginRender(window());
 	window().setViewport();
 	
 	_tonemap->use();

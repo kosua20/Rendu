@@ -353,7 +353,7 @@ int main(int argc, char ** argv) {
 		const glm::ivec2 screenSize = Input::manager().size();
 		const glm::mat4 mvp		   = camera.projection() * camera.view();
 
-		window.beginRender(glm::vec4(0.25f, 0.25f, 0.25f, 1.0f), 1.0f, Load::Operation::DONTCARE);
+		GPU::beginRender(window, 1.0f, Load::Operation::DONTCARE, glm::vec4(0.25f, 0.25f, 0.25f, 1.0f));
 		window.setViewport();
 
 		GPU::setDepthState(true, TestFunction::LESS, true);
@@ -381,7 +381,7 @@ int main(int argc, char ** argv) {
 		GPU::endRender();
 
 		// Render reference cubemap in the bottom right corner.
-		window.beginRender(Load::Operation::LOAD, 1.0f, Load::Operation::DONTCARE);
+		GPU::beginRender(window, 1.0f, Load::Operation::DONTCARE, Load::Operation::LOAD);
 		const float gizmoScale	   = 0.2f;
 		const glm::ivec2 gizmoSize = glm::ivec2(gizmoScale * glm::vec2(screenSize));
 		GPU::setViewport(0, screenSize[1] - gizmoSize[1], gizmoSize[0], gizmoSize[1]);

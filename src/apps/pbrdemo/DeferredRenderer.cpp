@@ -352,7 +352,7 @@ void DeferredRenderer::draw(const Camera & camera, Texture* dstColor, Texture* d
 	{
 		GPUMarker marker("Gbuffer");
 		// Clear the depth buffer (we know we will draw everywhere, no need to clear color).
-		GPU::beginRender(Load::Operation::DONTCARE, 1.0f, Load::Operation::DONTCARE, &_sceneDepth, &_sceneAlbedo, &_sceneNormal, &_sceneEffects);
+		GPU::beginRender(1.0f, Load::Operation::DONTCARE, &_sceneDepth, Load::Operation::DONTCARE, &_sceneAlbedo, &_sceneNormal, &_sceneEffects);
 		GPU::setViewport(_sceneDepth);
 		
 		renderOpaque(visibles, view, proj);
@@ -388,7 +388,7 @@ void DeferredRenderer::draw(const Camera & camera, Texture* dstColor, Texture* d
 
 	// Main lighting accumulation.
 	{
-		GPU::beginRender(Load::Operation::DONTCARE, Load::Operation::LOAD, Load::Operation::DONTCARE, &_depthCopy, &_lighting);
+		GPU::beginRender(Load::Operation::LOAD, Load::Operation::DONTCARE, &_depthCopy, Load::Operation::DONTCARE, &_lighting);
 		GPU::setViewport(_lighting);
 
 		// Merge probes contributions and background.
@@ -428,7 +428,7 @@ void DeferredRenderer::draw(const Camera & camera, Texture* dstColor, Texture* d
 		}
 		_fwdProbesGPU->data().upload();
 		// Now render transparent effects in a forward fashion.
-		GPU::beginRender(Load::Operation::LOAD, Load::Operation::LOAD, Load::Operation::DONTCARE, &_depthCopy, &_lighting);
+		GPU::beginRender(Load::Operation::LOAD, Load::Operation::DONTCARE, &_depthCopy, Load::Operation::LOAD, &_lighting);
 		GPU::setViewport(_lighting);
 		renderTransparent(visibles, view, proj);
 		GPU::endRender();

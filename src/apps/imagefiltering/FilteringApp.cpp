@@ -41,7 +41,7 @@ void FilteringApp::draw() {
 		GPU::setDepthState(true, TestFunction::LESS, true);
 		GPU::setBlendState(false);
 		GPU::setCullState(true, Faces::BACK);
-		GPU::beginRender(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f, Load::Operation::DONTCARE, &_sceneDepth, &_sceneColor);
+		GPU::beginRender(1.0f, Load::Operation::DONTCARE, &_sceneDepth, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), &_sceneColor);
 		GPU::setViewport(_sceneColor);
 
 		const glm::mat4 MVP = _userCamera.projection() * _userCamera.view();
@@ -104,7 +104,7 @@ void FilteringApp::draw() {
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 	
-	window().beginRender(Load::Operation::DONTCARE);
+	GPU::beginRender(window());
 	window().setViewport();
 	_passthrough->use();
 	_passthrough->texture(finalTexID, 0);

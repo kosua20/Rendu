@@ -107,7 +107,7 @@ void Game::draw(Window& window) {
 		_player->updateModels();
 		_inGameRenderer.drawPlayer(*_player, _gameResult);
 
-		window.beginRender(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
+		GPU::beginRender(window);
 		window.setViewport();
 		_finalProgram->use();
 		_finalProgram->texture(_gameResult, 0);
@@ -117,7 +117,7 @@ void Game::draw(Window& window) {
 	}
 
 	// Make sure we are rendering directly in the window.
-	window.beginRender(Load::Operation::LOAD, 1.0f);
+	GPU::beginRender(window, 1.0f, Load::Operation::DONTCARE, Load::Operation::LOAD);
 	const float renderRatio = float(_gameResult.height) / float(_gameResult.width);
 	_menuRenderer.drawMenu( _menus[_status], _config.screenResolution, renderRatio);
 	GPU::endRender();

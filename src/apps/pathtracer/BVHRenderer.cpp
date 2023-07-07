@@ -35,7 +35,7 @@ void BVHRenderer::draw(const Camera & camera, Texture * dstColor, Texture * dstD
 	GPU::setCullState(false);
 	GPU::setBlendState(false);
 
-	GPU::beginRender(layer, 0, glm::vec4(0.0f), 1.0f, Load::Operation::DONTCARE, dstDepth, dstColor);
+	GPU::beginRender(layer, 0, 1.0f, Load::Operation::DONTCARE, dstDepth, glm::vec4(0.0f), dstColor);
 	GPU::setViewport(*dstColor);
 
 	const glm::mat4 & view = camera.view();

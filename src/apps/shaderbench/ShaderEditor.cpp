@@ -278,7 +278,7 @@ void ShaderEditor::draw() {
 	
 	GPU::endRender();
 
-	window().beginRender(glm::vec4(0.3f,0.3f,0.3f, 1.0f));
+	GPU::beginRender(window(), Load::Operation::DONTCARE, Load::Operation::DONTCARE, glm::vec4(0.3f,0.3f,0.3f, 1.0f));
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	// If not in window mode, directly blit to the screne.
 	if(!_windowed){
