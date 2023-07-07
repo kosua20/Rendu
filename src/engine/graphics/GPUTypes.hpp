@@ -475,14 +475,14 @@ public:
 	 \param type the lifetime duration of the marker
 	 \param target the target command buffer
 	 */
-	GPUMarker(const std::string& label, const glm::vec4& color = glm::vec4(1.f), Type type = GPUMarker::Type::SCOPE, Target target = GPUMarker::Target::RENDER);
+	GPUMarker(const std::string& label, const glm::vec4& color, Type type = GPUMarker::Type::SCOPE, Target target = GPUMarker::Target::RENDER);
 
 	/** Constructor
 	 \param label the label to display
 	 \param type the lifetime duration of the marker
 	 \param target the target command buffer
 	 */
-	GPUMarker(const std::string& label, Type type, Target target);
+	GPUMarker(const std::string & label, Type type = GPUMarker::Type::SCOPE, Target target = GPUMarker::Target::RENDER);
 
 	/// Destructor
 	~GPUMarker();
