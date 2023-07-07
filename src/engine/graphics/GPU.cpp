@@ -391,7 +391,7 @@ void GPU::bindProgram(const Program & program){
 	}
 }
 
-void GPU::beginRender(const Load& colorOp, const Load& depthOp, const Load& stencilOp, const Texture* depthStencil, const Texture* color0, const Texture* color1, const Texture* color2, const Texture* color3){
+void GPU::beginRender(const Load & depthOp, const Load & stencilOp, const Texture * depthStencil, const Load & colorOp, const Texture * color0, const Texture * color1, const Texture * color2, const Texture * color3) {
 	GPU::bindAttachments(0, 0, colorOp, depthOp, stencilOp, depthStencil, color0, color1, color2, color3);
 }
 
@@ -403,7 +403,7 @@ void GPU::beginRender(const Load& depthOp, const Load& stencilOp, const Texture*
 	GPU::bindAttachments(0, 0, Load::Operation::DONTCARE, depthOp, stencilOp, depthStencil, nullptr, nullptr, nullptr, nullptr);
 }
 
-void GPU::beginRender(uint layer, uint mip, const Load& colorOp, const Load& depthOp, const Load& stencilOp, const Texture* depthStencil, const Texture* color0, const Texture* color1, const Texture* color2, const Texture* color3){
+void GPU::beginRender(uint layer, uint mip, const Load & depthOp, const Load & stencilOp, const Texture * depthStencil, const Load & colorOp, const Texture * color0, const Texture * color1, const Texture * color2, const Texture * color3) {
 	GPU::bindAttachments(layer, mip, colorOp, depthOp, stencilOp, depthStencil, color0, color1, color2, color3);
 }
 
@@ -414,6 +414,10 @@ void GPU::beginRender(uint layer, uint mip, const Load& colorOp, const Texture* 
 
 void GPU::beginRender(uint layer, uint mip, const Load& depthOp, const Load& stencilOp, const Texture* depthStencil){
 	GPU::bindAttachments(layer, mip, Load::Operation::DONTCARE, depthOp, stencilOp, depthStencil, nullptr, nullptr, nullptr, nullptr);
+}
+
+void GPU::beginRender(const Window & window, const Load & depthOp, const Load & stencilOp, const Load & colorOp) {
+	GPU::bindAttachments(0, 0, colorOp, depthOp, stencilOp, &window._swapchain->depth(), &window._swapchain->color(), nullptr, nullptr, nullptr);
 }
 
 void GPU::bindAttachments(uint layer, uint mip, const Load& colorOp, const Load& depthOp, const Load& stencilOp, const Texture* depthStencil, const Texture* color0, const Texture* color1, const Texture* color2, const Texture* color3){

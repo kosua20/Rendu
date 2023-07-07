@@ -156,7 +156,8 @@ bool Window::nextFrame() {
 		ImGui::Render();
 
 		// Draw ImGui.
-		GPU::beginRender(Load::Operation::LOAD, Load::Operation::LOAD, Load::Operation::LOAD, &_swapchain->depth(), &_swapchain->color());
+		GPUMarker marker("ImGui");
+		GPU::beginRender(Load::Operation::LOAD, Load::Operation::LOAD, &_swapchain->depth(), Load::Operation::LOAD, &_swapchain->color());
 		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), GPU::getInternal()->getRenderCommandBuffer());
 		GPU::endRender();
 	}
@@ -197,10 +198,6 @@ bool Window::nextFrame() {
 	_frameStarted = true;
 	const bool shouldClose = glfwWindowShouldClose(_window);
 	return !shouldClose;
-}
-
-void Window::beginRender(const Load& colorOp, const Load& depthOp, const Load& stencilOp){
-	GPU::beginRender(0, 0, colorOp, depthOp, stencilOp, &_swapchain->depth(), &_swapchain->color(), nullptr, nullptr, nullptr);
 }
 
 void Window::setViewport(){
