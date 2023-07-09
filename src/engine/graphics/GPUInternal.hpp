@@ -44,7 +44,6 @@ class Texture;
  \ingroup Graphics
  */
 struct ResourceToDelete {
-	std::string name; ///< Debug name.
 	VkImageView view = VK_NULL_HANDLE; ///< Image view to delete.
 	VkSampler sampler = VK_NULL_HANDLE; ///< Sampler to delete.
 	VkImage image = VK_NULL_HANDLE; ///< Image to delete.

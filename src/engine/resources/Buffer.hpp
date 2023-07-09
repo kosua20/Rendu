@@ -44,6 +44,11 @@ public:
 	 */
 	void clean();
 
+	/** Get the resource name.
+		\return the name.
+	 */
+   const std::string & name() const;
+
 	/** Copy assignment operator (disabled).
 	 \return a reference to the object assigned to
 	 */

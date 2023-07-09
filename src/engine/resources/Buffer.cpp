@@ -23,6 +23,10 @@ void Buffer::clean() {
 	gpu = nullptr;
 }
 
+const std::string & Buffer::name() const {
+	return _name;
+}
+
 Buffer::~Buffer() {
 	clean();
 }

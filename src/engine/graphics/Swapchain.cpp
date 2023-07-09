@@ -170,7 +170,6 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 		color.drawable = true;
 		color.format = colorFormat;
 		color.gpu.reset(new GPUTexture(color.format));
-		color.gpu->name = color.name();
 		color.gpu->owned = false;
 		color.gpu->image = colorImages[i];
 		color.gpu->layouts.resize(1, std::vector<VkImageLayout>(1, VK_IMAGE_LAYOUT_UNDEFINED));

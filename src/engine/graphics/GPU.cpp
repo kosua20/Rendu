@@ -579,7 +579,7 @@ void GPU::setupTexture(Texture & texture) {
 	}
 
 	texture.gpu.reset(new GPUTexture(texture.format));
-	texture.gpu->name = texture.name();
+	const std::string& name = texture.name();
 
 	const bool is3D = texture.shape & TextureShape::D3;
 	const bool isCube = texture.shape & TextureShape::Cube;
@@ -633,7 +633,7 @@ void GPU::setupTexture(Texture & texture) {
 	allocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 	VK_RET(vmaCreateImage(_allocator, &imageInfo, &allocInfo, &(texture.gpu->image), &(texture.gpu->data), nullptr));
 
-	VkUtils::setDebugName(_context, VK_OBJECT_TYPE_IMAGE, uint64_t(texture.gpu->image), "%s", texture.gpu->name.c_str());
+	VkUtils::setDebugName(_context, VK_OBJECT_TYPE_IMAGE, uint64_t(texture.gpu->image), "%s", name.c_str());
 
 	// Create view.
 	VkImageViewCreateInfo viewInfo = {};
@@ -653,7 +653,7 @@ void GPU::setupTexture(Texture & texture) {
 		return;
 	}
 
-	VkUtils::setDebugName(_context, VK_OBJECT_TYPE_IMAGE_VIEW, uint64_t(texture.gpu->view), "%s-global", texture.gpu->name.c_str());
+	VkUtils::setDebugName(_context, VK_OBJECT_TYPE_IMAGE_VIEW, uint64_t(texture.gpu->view), "%s-global", name.c_str());
 
 	// Slice format
 	VkImageViewType viewTypeSlice = VK_IMAGE_VIEW_TYPE_2D;
@@ -687,7 +687,7 @@ void GPU::setupTexture(Texture & texture) {
 				return;
 			}
 
-			VkUtils::setDebugName(_context, VK_OBJECT_TYPE_IMAGE_VIEW, uint64_t(texture.gpu->views[mid].views[lid]), "%s-mip %u-level %u", texture.gpu->name.c_str(), mid, lid);
+			VkUtils::setDebugName(_context, VK_OBJECT_TYPE_IMAGE_VIEW, uint64_t(texture.gpu->views[mid].views[lid]), "%s-mip %u-level %u", name.c_str(), mid, lid);
 		}
 
 		// Create global mip view.
@@ -708,7 +708,7 @@ void GPU::setupTexture(Texture & texture) {
 			return;
 		}
 
-		VkUtils::setDebugName(_context, VK_OBJECT_TYPE_IMAGE_VIEW, uint64_t(texture.gpu->views[mid].mipView), "%s-mip %u", texture.gpu->name.c_str(), mid);
+		VkUtils::setDebugName(_context, VK_OBJECT_TYPE_IMAGE_VIEW, uint64_t(texture.gpu->views[mid].mipView), "%s-mip %u", name.c_str(), mid);
 
 	}
 
@@ -1083,6 +1083,7 @@ void GPU::setupBuffer(Buffer & buffer) {
 	}
 	// Create.
 	buffer.gpu.reset(new GPUBuffer(buffer.type));
+	const std::string& name = buffer.name();
 
 	static const std::unordered_map<BufferType, VkBufferUsageFlags> types = {
 		{ BufferType::VERTEX, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT},
@@ -1120,8 +1121,7 @@ void GPU::setupBuffer(Buffer & buffer) {
 
 	VK_RET(vmaCreateBuffer(_allocator, &bufferInfo, &allocInfo, &(buffer.gpu->buffer), &(buffer.gpu->data), &resultInfos));
 
-	// \todo Set debug name on buffer
-	VkUtils::setDebugName(_context, VK_OBJECT_TYPE_BUFFER, uint64_t(buffer.gpu->buffer), "Buffer");
+	VkUtils::setDebugName(_context, VK_OBJECT_TYPE_BUFFER, uint64_t(buffer.gpu->buffer), "%s", name.c_str());
 
 	if(buffer.gpu->mappable){
 		buffer.gpu->mapped = (char*)resultInfos.pMappedData;
@@ -1725,7 +1725,6 @@ void GPU::clean(GPUTexture & tex){
 	rsc.image = tex.image;
 	rsc.data = tex.data;
 	rsc.frame = _context.frameIndex;
-	rsc.name = tex.name;
 
 	const uint mipCount = uint(tex.views.size());
 	const uint layerCount = tex.views.empty() ? 0u : uint(tex.views[0].views.size());
@@ -1735,7 +1734,6 @@ void GPU::clean(GPUTexture & tex){
 		ResourceToDelete& rsc = _context.resourcesToDelete.back();
 		rsc.view = tex.views[mid].mipView;
 		rsc.frame = _context.frameIndex;
-		rsc.name = tex.name;
 
 		assert(layerCount == tex.views[mid].views.size());
 		for(uint lid = 0; lid < layerCount; ++lid){
@@ -1743,7 +1741,6 @@ void GPU::clean(GPUTexture & tex){
 			ResourceToDelete& rsc = _context.resourcesToDelete.back();
 			rsc.view = tex.views[mid].views[lid];
 			rsc.frame = _context.frameIndex;
-			rsc.name = tex.name;
 		}
 	}
 	tex.views.clear();
