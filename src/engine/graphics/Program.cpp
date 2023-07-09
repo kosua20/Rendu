@@ -389,13 +389,47 @@ void Program::update(){
 
 	// Upload all dirty uniform buffers, and the offsets.
 	if(_dirtySets[UNIFORMS_SET]){
+		bool refreshDynamicDescriptors = false;
 		for(const auto& buffer : _dynamicBuffers){
 			if(buffer.second.dirty){
-				buffer.second.buffer->upload();
+				bool newBuffer = buffer.second.buffer->upload();
+				// If a uniform buffer has moved to another internal storage (many draw calls in a frame), we need to refresh descriptors.
+				refreshDynamicDescriptors |= newBuffer;
 			}
 			_currentOffsets[buffer.second.descriptorIndex] = uint32_t(buffer.second.buffer->currentOffset());
 		}
 		_dirtySets[UNIFORMS_SET] = false;
+
+		if(refreshDynamicDescriptors){
+			// We can't just update the current descriptor set as it might be in use.
+			context->descriptorAllocator.freeSet(_currentSets[UNIFORMS_SET]);
+			_currentSets[UNIFORMS_SET] = context->descriptorAllocator.allocateSet(_state.setLayouts[UNIFORMS_SET]);
+
+			VkUtils::setDebugName(*context, VK_OBJECT_TYPE_DESCRIPTOR_SET, uint64_t(_currentSets[UNIFORMS_SET].handle), "%s-%s", "Uniforms", _name.c_str());
+
+			std::vector<VkDescriptorBufferInfo> infos(_dynamicBuffers.size());
+			std::vector<VkWriteDescriptorSet> writes;
+			uint tid = 0;
+
+			for(const auto& buffer : _dynamicBuffers){
+				infos[tid] = {};
+				infos[tid].buffer = buffer.second.buffer->gpu->buffer;
+				infos[tid].offset = 0;
+				infos[tid].range = buffer.second.buffer->baseSize();
+
+				VkWriteDescriptorSet write{};
+				write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+				write.dstSet = _currentSets[UNIFORMS_SET].handle;
+				write.dstBinding = buffer.first;
+				write.dstArrayElement = 0;
+				write.descriptorCount = 1;
+				write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+				write.pBufferInfo = &infos[tid];
+				writes.push_back(write);
+				++tid;
+			}
+			vkUpdateDescriptorSets(context->device, uint32_t(writes.size()), writes.data(), 0, nullptr);
+		}
 	}
 
 	// Update the texture descriptors

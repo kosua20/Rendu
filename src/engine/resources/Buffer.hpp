@@ -110,8 +110,9 @@ public:
 	/** Upload data. The buffer will internally copy the data (using the internal size)
 	 to a region of mapped GPU memory. Buffering will be handled based on the update frequency.
 	 \param data the data to copy
+	 \return true if a new GPU buffer was allocated internally
 	 */
-	void upload(unsigned char * data);
+	bool upload(unsigned char * data);
 
 	/** Clean the buffer. */
 	void clean();
@@ -146,7 +147,7 @@ private:
 	const size_t _baseSize; ///< The uniform buffer size (ie the size of one instance).
 	size_t _alignment = 0; ///< The alignment constraint to respect between successive instances.
 	size_t _offset = 0; ///< The current offset in bytes in the array of instances.
-
+	bool _wrapAround = true; ///< Should the buffer attempt to reuse the same memory once full.
 };
 
 /**
@@ -204,8 +205,9 @@ public:
 
 	/** Send the buffer data to the GPU.
 	 Previously uploaded content will potentially be erased.
+	 \return true if a new GPU buffer was allocated internally
 	 */
-	void upload();
+	bool upload();
 
 	/** Copy assignment operator (disabled).
 	 \return a reference to the object assigned to
@@ -237,6 +239,6 @@ UniformBuffer<T>::UniformBuffer(size_t count, UniformFrequency usage, const std:
 }
 
 template <typename T>
-void UniformBuffer<T>::upload() {
-	UniformBufferBase::upload(reinterpret_cast<unsigned char*>(data.data()));
+bool UniformBuffer<T>::upload() {
+	return UniformBufferBase::upload(reinterpret_cast<unsigned char*>(data.data()));
 }

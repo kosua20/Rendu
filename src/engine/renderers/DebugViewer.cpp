@@ -380,7 +380,7 @@ void DebugViewer::displayMarker(const MarkerInfos& marker){
 }
 
 void DebugViewer::displayMarkers(const std::string & name, MarkerCategoryInfos& category){
-	ImGui::SetNextWindowSize(ImVec2(140, 240), ImGuiCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(280, 480), ImGuiCond_Once);
 	const std::string finalWinName = "Makers - " + name;
 
 	if(ImGui::Begin(finalWinName.c_str(), &category.visible)) {

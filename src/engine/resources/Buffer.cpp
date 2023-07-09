@@ -52,9 +52,11 @@ UniformBufferBase::UniformBufferBase(size_t sizeInBytes, UniformFrequency use, c
 	if(use == UniformFrequency::FRAME){
 		multipler = 2;
 	} else if(use == UniformFrequency::VIEW){
-		multipler = 64;
+		multipler = 16;
+		_wrapAround = false;
 	} else if(use == UniformFrequency::DYNAMIC){
-		multipler = 1024;
+		multipler = 64;
+		_wrapAround = false;
 	}
 
 	// Compute expected alignment.
@@ -71,14 +73,25 @@ UniformBufferBase::UniformBufferBase(size_t sizeInBytes, UniformFrequency use, c
 	// Immediatly setup and allocate the GPU buffer.
 	GPU::setupBuffer(*this);
 
-	// Place ourselves at the end, to artificially end up at the beginning at the first upload.
-	_offset = size;
+	// Place ourselves at the end, to artificially end up at the beginning at the first upload for wrap around buffers.
+	// For pooled buffers, start at 0, we'll loose one slot at the first frame.
+	_offset = _wrapAround ? size : 0;
 }
 
-void UniformBufferBase::upload(unsigned char * data){
-	// Move to the next copy in the buffer, warpping around.
+bool UniformBufferBase::upload(unsigned char * data){
+
+	bool newBuffer = false;
+	// Move to the next copy in the buffer, wrapping around.
 	_offset += _alignment;
+	// Can we upload at the next offset?
 	if(_offset + _baseSize >= size){
+		// If we wrap around, just go back to the beginning of the buffer, assuming the data there won't be used at the current frame.
+		// Otherwise, allocate a new GPU buffer. We'll have to notify the user about this (to update descriptor sets for instance).
+		if(!_wrapAround){
+			// Not enough room, allocate a new buffer.
+			GPU::setupBuffer(*this);
+			newBuffer = true;
+		}
 		_offset = 0;
 	}
 
@@ -86,6 +99,7 @@ void UniformBufferBase::upload(unsigned char * data){
 	std::memcpy(gpu->mapped + _offset, data, _baseSize);
 
 	GPU::flushBuffer(*this, _offset, _baseSize);
+	return newBuffer;
 
 }
 
