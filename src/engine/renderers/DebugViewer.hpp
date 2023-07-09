@@ -43,6 +43,28 @@ public:
 	*/
 	void untrack(const Mesh * mesh);
 
+	/** Register a scoped marker
+	 \param category the marker category
+	 \param label the marker name
+	 \param color the marker color
+	 */
+	void pushMarker(const std::string& category, const std::string& label, const glm::vec4& color);
+
+	/** Register a punctual marker
+	 \param category the marker category
+	 \param label the marker name
+	 \param color the marker color
+	 */
+	void insertMarker(const std::string& category, const std::string& label, const glm::vec4& color);
+
+	/** Notify of the end of a scoped marker
+	 \param category the category to which the marker belonged
+	 */
+	void popMarker(const std::string& category);
+
+	/** Move to the next frame */
+	void nextFrame();
+
 	/** Display interface and monitored data. */
 	void interface();
 
@@ -96,6 +118,24 @@ public:
 	*/
 	static void untrackDefault(const Mesh * mesh);
 
+	/** Register a scoped marker
+	\param category the marker category
+	\param label the marker name
+	\param color the marker color
+	*/
+	static void pushMarkerDefault(const std::string& category, const std::string& label, const glm::vec4& color);
+
+	/** Register a punctual marker
+	\param category the marker category
+	\param label the marker name
+	\param color the marker color
+	*/
+	static void insertMarkerDefault(const std::string& category, const std::string& label, const glm::vec4& color);
+
+	/** Notify of the end of a scoped marker
+	\param category the category to which the marker belonged
+	*/
+	static void popMarkerDefault(const std::string& category);
 
 private:
 
@@ -131,9 +171,38 @@ private:
 		bool populated = false; ///< Has the state already been queried.
 	};
 
+	/** Marker information. */
+	struct MarkerInfos {
+		std::string name; ///< Marker label.
+		glm::vec4 color; ///< Marker color.
+		uint index; ///< Marker index in the frame.
+		std::vector<MarkerInfos> markers; ///< Child markers.
+	};
+
+	/** Markers category information. */
+	struct MarkerCategoryInfos {
+		std::vector<MarkerInfos> markers; ///< Root markers.
+		int  frequency = 1; ///< Sampling frequency.
+		int  offset = 0; ///< Sampling offset.
+		uint depth = 0; ///< Current marker hierarchy depth.
+		bool visible = false;  ///< Are the marker details displayed.
+		bool record = true; ///< Should the category be recorded at this frame.
+	};
+
 	/** Display GPU metrics for the last completed frame in a panel.
 	 */
 	void displayMetrics();
+
+	/** Display GPU marker and its children
+	 \param marker the marker to display
+	 */
+	void displayMarker(const MarkerInfos& marker);
+
+	/** Display a hierarchy of GPU markers
+	 \param name the name of the category
+	 \param category the category of markers to display
+	 */
+	void displayMarkers(const std::string & name, MarkerCategoryInfos& category);
 
 	/** Display GPU state in a panel.
 	 \param name name of the state
@@ -168,10 +237,14 @@ private:
 	std::vector<TextureInfos> _drawables; ///< The registered drawable textures.
 	std::vector<MeshInfos> _meshes; ///< The registered meshes.
 	std::unordered_map<std::string, StateInfos> _states; ///< GPU states currently tracked.
+	std::unordered_map<std::string, MarkerCategoryInfos> _markers; ///< The registered markers.
 
 	Program * _texDisplay; ///< Texture display shader.
-	uint _textureId = 0; ///< Default texture name counter.
+	uint64_t _frameCounter = 0; ///< Frame counter.
+	uint _textureId  = 0; ///< Default texture name counter.
 	uint _drawableId = 0; ///< Default drawable name counter.
-	uint _meshId    = 0; ///< Default mesh name counter.
-	uint _winId		= 0; ///< Internal window counter.
+	uint _meshId     = 0; ///< Default mesh name counter.
+	uint _winId		 = 0; ///< Internal window counter.
+	uint _markerId   = 0; ///< Internal marker counter.
+
 };

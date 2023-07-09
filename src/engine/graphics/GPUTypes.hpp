@@ -489,12 +489,18 @@ public:
 
 private:
 
+	/** Insert the marker in the proper command buffer
+	 \param label the marker label
+	 \param color the marker color
+	 */
 	void createMarker(const std::string& label, const glm::vec4& color);
 
 	Type _type = GPUMarker::Type::SCOPE; ///< The type of marker.
 	Target _target = GPUMarker::Target::RENDER; ///< The target command buffer.
 
 };
+
+STD_HASH(GPUMarker::Target);
 
 /** \brief Descriptor set allocation.
  \ingroup Graphics

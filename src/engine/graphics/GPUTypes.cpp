@@ -2,6 +2,7 @@
 #include "graphics/GPU.hpp"
 #include "graphics/GPUInternal.hpp"
 #include "system/System.hpp"
+#include "renderers/DebugViewer.hpp"
 
 #include <cstring>
 
@@ -164,6 +165,11 @@ GPUMarker::GPUMarker(const std::string& label, Type type, Target target) : _type
 	createMarker(label, glm::vec4(color, 1.f));
 }
 
+const std::unordered_map<GPUMarker::Target, std::string> debugMarkerCategories = {
+	{ GPUMarker::Target::RENDER, "Render"},
+	{ GPUMarker::Target::UPLOAD, "Upload"},
+};
+
 void GPUMarker::createMarker(const std::string& label, const glm::vec4& color){
 	GPUContext* context = GPU::getInternal();
 	if(!context->markersEnabled){
@@ -179,11 +185,14 @@ void GPUMarker::createMarker(const std::string& label, const glm::vec4& color){
 	labelInfo.color[3] = color[3];
 
 	VkCommandBuffer& commandBuffer = _target == Target::RENDER ? context->getRenderCommandBuffer() : context->getUploadCommandBuffer();
+	const std::string& categoryName = debugMarkerCategories.at(_target);
 
 	if(_type == Type::INSERT){
 		vkCmdInsertDebugUtilsLabelEXT(commandBuffer, &labelInfo);
+		DebugViewer::insertMarkerDefault(categoryName, label, color);
 	} else {
 		vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &labelInfo);
+		DebugViewer::pushMarkerDefault(categoryName, label, color);
 	}
 }
 
@@ -198,4 +207,6 @@ GPUMarker::~GPUMarker(){
 
 	VkCommandBuffer& commandBuffer = _target == Target::RENDER ? context->getRenderCommandBuffer() : context->getUploadCommandBuffer();
 	vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+
+	DebugViewer::popMarkerDefault(debugMarkerCategories.at(_target));
 }

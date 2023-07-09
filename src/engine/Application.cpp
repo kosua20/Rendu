@@ -58,6 +58,11 @@ void Application::update() {
 	_frameTimes[_currFrame] = _frameTime;
 	_smoothTime += _frameTimes[_currFrame];
 	_currFrame = (_currFrame + 1) % _framesCount;
+
+	// Reset debug viewer.
+	if(_debug){
+		_debug->nextFrame();
+	}
 }
 
 void Application::finish() {

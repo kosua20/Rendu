@@ -99,8 +99,57 @@ void DebugViewer::track(const Mesh * mesh) {
 	});
 }
 
-void DebugViewer::trackState(const std::string & name){
+void DebugViewer::pushMarker(const std::string& category, const std::string& label, const glm::vec4& color){
+	// Find the category or create it.
+	MarkerCategoryInfos& collection = _markers[category];
+	if(!collection.record){
+		return;
+	}
 
+	std::vector<MarkerInfos>* level = &collection.markers;
+	for(unsigned int depth = 0; depth < collection.depth; ++depth){
+		level = &(level->back().markers);
+	}
+
+	MarkerInfos infos;
+	infos.name = label;
+	infos.color = color;
+	infos.index = ++_markerId;
+	level->push_back(infos);
+
+	++collection.depth;
+}
+
+void DebugViewer::insertMarker(const std::string& category, const std::string& label, const glm::vec4& color){
+	// Find the category or create it.
+	MarkerCategoryInfos& collection = _markers[category];
+	if(!collection.record){
+		return;
+	}
+
+	std::vector<MarkerInfos>* level = &collection.markers;
+	for(unsigned int depth = 0; depth < collection.depth; ++depth){
+		level = &(level->back().markers);
+	}
+
+	MarkerInfos infos;
+	infos.name = label;
+	infos.color = color;
+	infos.index = ++_markerId;
+	level->push_back(infos);
+}
+
+void DebugViewer::popMarker(const std::string& category){
+	MarkerCategoryInfos& collection = _markers[category];
+	if(!collection.record){
+		return;
+	}
+
+	assert(collection.depth > 0);
+	--collection.depth;
+}
+
+void DebugViewer::trackState(const std::string & name){
 	// Only update the state if it's currently displayed on screen,
 	// or if it's the very first time it's queried.
 	if(_states[name].visible || !_states[name].populated){
@@ -177,7 +226,6 @@ void DebugViewer::registerTexture(const std::string& name, const Texture* tex, T
 	infos.displayName		  = " - " + std::to_string(tex->width) + "x" + std::to_string(tex->height) + " - " + details + "##" + std::to_string(_winId++);
 }
 
-
 void DebugViewer::untrack(const Texture * tex) {
 	std::vector<TextureInfos>& textureList = tex->drawable ? _drawables : _textures;
 	auto end = std::remove_if(textureList.begin(), textureList.end(), [tex](const TextureInfos & infos) {
@@ -191,6 +239,21 @@ void DebugViewer::untrack(const Mesh * mesh) {
 		return infos.mesh == mesh;
 	});
 	_meshes.erase(end, _meshes.end());
+}
+
+void DebugViewer::nextFrame(){
+	++_frameCounter;
+	_markerId = 0;
+
+	// Record everything _markerFrequency frames.
+	for(auto& infos : _markers){
+		MarkerCategoryInfos& category = infos.second;
+		category.record = (_frameCounter % category.frequency) == category.offset;
+		if(category.record){
+			category.depth = 0;
+			category.markers.clear();
+		}
+	}
 }
 
 void DebugViewer::interface() {
@@ -227,6 +290,12 @@ void DebugViewer::interface() {
 			}
 			ImGui::EndMenu();
 		}
+		if(ImGui::BeginMenu("Markers")) {
+			for(auto & markers : _markers) {
+				ImGui::MenuItem(markers.first.c_str(), nullptr, &markers.second.visible);
+			}
+			ImGui::EndMenu();
+		}
 		ImGui::EndMainMenuBar();
 	}
 
@@ -237,6 +306,7 @@ void DebugViewer::interface() {
 		}
 		displayTexture("", tex);
 	}
+
 	for(TextureInfos & tex : _drawables) {
 		if(!tex.visible) {
 			continue;
@@ -250,11 +320,19 @@ void DebugViewer::interface() {
 		}
 		displayMesh(mesh);
 	}
+
 	for(auto & infos : _states){
 		if(!infos.second.visible){
 			continue;
 		}
 		displayState(infos.first, infos.second);
+	}
+
+	for(auto & infos : _markers){
+		if(!infos.second.visible){
+			continue;
+		}
+		displayMarkers(infos.first, infos.second);
 	}
 
 	// Display raw metrics.
@@ -279,6 +357,48 @@ void DebugViewer::displayMetrics(){
 			ImGui::Text("Mesh bindings: %llu", metrics.meshBindings);
 			ImGui::Text("Screen quads: %llu", metrics.quadCalls);
 			ImGui::Text("Draw calls: %llu", metrics.drawCalls);
+		}
+	}
+	ImGui::End();
+}
+
+void DebugViewer::displayMarker(const MarkerInfos& marker){
+	ImGui::PushID(marker.index);
+	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(marker.color[0], marker.color[1], marker.color[2], marker.color[3]));
+	if(marker.markers.empty()){
+		ImGui::BulletText("%s", marker.name.c_str());
+	} else {
+		if(ImGui::TreeNode(marker.name.c_str())){
+			for(const MarkerInfos& child : marker.markers){
+				displayMarker(child);
+			}
+			ImGui::TreePop();
+		}
+	}
+	ImGui::PopStyleColor();
+	ImGui::PopID();
+}
+
+void DebugViewer::displayMarkers(const std::string & name, MarkerCategoryInfos& category){
+	ImGui::SetNextWindowSize(ImVec2(140, 240), ImGuiCond_Once);
+	const std::string finalWinName = "Makers - " + name;
+
+	if(ImGui::Begin(finalWinName.c_str(), &category.visible)) {
+
+		// Header of settings.
+		ImGui::PushItemWidth(120);
+		if(ImGui::InputInt("Frequency", &category.frequency, 1, 1)){
+			category.frequency = glm::max(1, category.frequency);
+			category.offset = glm::clamp(category.offset, 0, category.frequency - 1);
+		}
+		if(ImGui::InputInt("Offset", &category.offset, 1, 1)){
+			category.offset = glm::clamp(category.offset, 0, category.frequency - 1);
+		}
+		ImGui::PopItemWidth();
+		ImGui::Separator();
+
+		for(const MarkerInfos& marker : category.markers){
+			displayMarker(marker);
 		}
 	}
 	ImGui::End();
@@ -553,4 +673,25 @@ void DebugViewer::untrackDefault(const Mesh * mesh) {
 		return;
 	}
 	_shared->untrack(mesh);
+}
+
+void DebugViewer::pushMarkerDefault(const std::string& category, const std::string& label, const glm::vec4& color){
+	if(!_shared) {
+		return;
+	}
+	_shared->pushMarker(category, label, color);
+}
+
+void DebugViewer::insertMarkerDefault(const std::string& category, const std::string& label, const glm::vec4& color){
+	if(!_shared) {
+		return;
+	}
+	_shared->insertMarkerDefault(category, label, color);
+}
+
+void DebugViewer::popMarkerDefault(const std::string& category){
+	if(!_shared) {
+		return;
+	}
+	_shared->popMarker(category);
 }
