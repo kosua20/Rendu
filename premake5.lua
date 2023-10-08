@@ -60,7 +60,7 @@ workspace("Rendu")
 
 -- Helper functions for the projects.
 
-function CommonSetup()
+function CommonSetup(relativeSrcRoot)
 	-- C++ settings
 	language("C++")
 	cppdialect("C++11")
@@ -73,10 +73,13 @@ function CommonSetup()
 		-- Ignore missing PDBs.
 		linkoptions({ "/IGNORE:4099"})
 	filter({})
-	-- Common include dirs
-	-- System headers are used to support angled brackets in Xcode.
-	externalincludedirs({ "src/libs/", "src/libs/glfw/include/"})
 
+	-- System headers are used to support angled brackets in Xcode.
+	externalincludedirs({ relativeSrcRoot.."/libs/", relativeSrcRoot.."/libs/glfw/include/"})
+	
+	filter({})
+
+	-- Vulkan dependencies
 	if _OPTIONS["env_vulkan_sdk"] then
 		externalincludedirs({ "$(VULKAN_SDK)/include" })
 		libdirs({ "$(VULKAN_SDK)/lib" })
@@ -89,17 +92,11 @@ function CommonSetup()
 			externalincludedirs({ "/usr/local/include/" })
 			libdirs({ "/usr/local/lib" })
 	end
+
 	filter({})
-end	
+end
 
-function ExecutableSetup()
-	kind("ConsoleApp")
-	CommonSetup()
-
-	-- Link with compiled librarires
-	includedirs({ "src/engine" })
-	links({"Engine"})
-
+function LinkSystemLibraries()
 	links({"nfd", "glfw3"})
 	
 	-- Libraries for each platform.
@@ -113,16 +110,30 @@ function ExecutableSetup()
 	filter("system:windows")
 		links({"comctl32"})
 
+	filter({})
+
 	-- Vulkan dependencies
 	filter("system:macosx or linux")
 		links({"glslang", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "SPIRV", "SPIRV-Tools-opt", "SPIRV-Tools","OSDependent" })
 	
 	filter({"system:windows", "configurations:Dev"})
 		links({"glslangd", "OGLCompilerd", "SPIRVd", "OSDependentd", "MachineIndependentd", "GenericCodeGend", "SPIRV-Tools-optd", "SPIRV-Toolsd"})
+	
 	filter({"system:windows", "configurations:Release" })
 		links({"glslang", "OGLCompiler", "SPIRV", "OSDependent", "MachineIndependent", "GenericCodeGen", "SPIRV-Tools-opt", "SPIRV-Tools"})
 
 	filter({})
+end
+
+function ExecutableSetup()
+	kind("ConsoleApp")
+	CommonSetup("src")
+
+	-- Link with compiled librarires
+	includedirs({ "src/engine" })
+	links({"Engine"})
+
+	LinkSystemLibraries();
 
 	-- Register in the projects list for the ALL target.
 	table.insert(projects, project().name)
@@ -164,7 +175,7 @@ end
 -- Projects
 
 project("Engine")
-	CommonSetup()
+	CommonSetup("src")
 	kind("StaticLib")
 
 	includedirs({ "src/engine" })
@@ -263,7 +274,7 @@ group("Meta")
 
 project("ALL")
 	kind("ConsoleApp")
-	CommonSetup()
+	CommonSetup("src")
 	dependson({ "Engine" })
 	dependson( projects )
 	-- We need a dummy file to execute.
