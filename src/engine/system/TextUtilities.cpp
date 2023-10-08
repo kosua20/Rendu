@@ -118,3 +118,23 @@ std::string TextUtilities::padInt(uint number, uint padding) {
 	const int delta			 = int(padding) - int(numStr.size());
 	return delta <= 0 ? numStr : (std::string(delta, '0') + numStr);
 }
+
+std::string TextUtilities::lowercase(const std::string & src){
+	std::string dst(src);;
+	std::transform(src.begin(), src.end(), dst.begin(),
+				   [](unsigned char c){
+		return std::tolower(c);
+	});
+	return dst;
+}
+
+std::string TextUtilities::uppercase( const std::string& src )
+{
+	std::string dst( src );;
+	std::transform( src.begin(), src.end(), dst.begin(),
+					[] ( unsigned char c )
+	{
+		return std::toupper( c );
+	} );
+	return dst;
+}

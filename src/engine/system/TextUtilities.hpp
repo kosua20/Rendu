@@ -84,4 +84,16 @@ public:
 	*/
 	static std::string padInt(uint number, uint padding);
 
+	/** Convert all upper case characters in a string to lower case.
+	 \param src the string to convert
+	 \return the converted string
+	 */
+	static std::string lowercase(const std::string & src);
+
+	/** Convert all lower case characters in a string to upper case.
+	 \param src the string to convert
+	 \return the converted string
+	 */
+	static std::string uppercase(const std::string & src);
+
 };
