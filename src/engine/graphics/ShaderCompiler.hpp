@@ -5,9 +5,8 @@
 #include "Common.hpp"
 
 // Forward declarations
-namespace glslang {
-	class TProgram;
-	class TType;
+namespace spirv_cross {
+	struct SPIRType;
 }
 
 /**
@@ -46,18 +45,12 @@ private:
 	 * \param type the type to convert
 	 * \return the corresponding Rendu uniform type
 	 */
-	static Program::UniformDef::Type convertType(const glslang::TType& type);
-
-	/** Retrieve a set location from its type.
-	 * \param type the type of the set
-	 * \return the set location 
-	 */
-	static uint getSetFromType(const glslang::TType& type);
+	static Program::UniformDef::Type convertType(const spirv_cross::SPIRType& type);
 
 	/** Perform reflection on a compiled program and populate our reflection structures.
-	 * \param program the compiled SPIR-V program
+	 * \param spirv the compiled SPIR-V program
 	 * \param stage will contain reflection data
 	 * */
-	static void reflect(glslang::TProgram & program, Program::Stage & stage);
+	static void reflect(const std::vector<uint32_t>& spirv, Program::Stage & stage);
 
 };

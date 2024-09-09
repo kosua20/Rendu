@@ -6,6 +6,7 @@
 
 #include <glslang/Public/ShaderLang.h>
 #include <glslang/SPIRV/GlslangToSpv.h>
+#include <spirv_cross/spirv_cross.hpp>
 
 #include <map>
 #include <sstream>
@@ -191,7 +192,7 @@ void ShaderCompiler::compile(const std::string & prog, ShaderType type, Program:
 		return;
 	}
 
-	std::vector<unsigned int> spirv;
+	std::vector<uint32_t> spirv;
 	glslang::SpvOptions spvOptions;
 	spvOptions.generateDebugInfo = false;
 	spvOptions.disableOptimizer = false;
@@ -204,13 +205,13 @@ void ShaderCompiler::compile(const std::string & prog, ShaderType type, Program:
 		return;
 	}
 
-	reflect(program, stage);
+	reflect(spirv, stage);
 
 	if(generateModule){
 		VkShaderModuleCreateInfo createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-		createInfo.codeSize = spirv.size() * sizeof(unsigned int);
-		createInfo.pCode = reinterpret_cast<const uint32_t*>(spirv.data());
+		createInfo.codeSize = spirv.size() * sizeof(uint32_t);
+		createInfo.pCode = spirv.data();
 		VkShaderModule shaderModule;
 		GPUContext* context = GPU::getInternal();
 		if(vkCreateShaderModule(context->device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
@@ -223,18 +224,19 @@ void ShaderCompiler::compile(const std::string & prog, ShaderType type, Program:
 	}
 }
 
-Program::UniformDef::Type ShaderCompiler::convertType(const glslang::TType& type){
-
+Program::UniformDef::Type ShaderCompiler::convertType(const spirv_cross::SPIRType& type){
+	// Simplified basic type conversion.
+	// Does not support non-square matrices nor non-float matrice.
 	using Type = Program::UniformDef::Type;
 
-	const glslang::TBasicType baseType = type.getBasicType();
+	const spirv_cross::SPIRType::BaseType baseType = type.basetype;
 
 	// Build a supported type matrix.
-	static const std::map<glslang::TBasicType, std::array<Type, 5>> typesMatrix = {
-		{glslang::EbtBool, {Type::BOOL, Type::BOOL, Type::BVEC2, Type::BVEC3, Type::BVEC4}},
-		{glslang::EbtInt, {Type::INT, Type::INT, Type::IVEC2, Type::IVEC3, Type::IVEC4}},
-		{glslang::EbtUint, {Type::UINT, Type::UINT, Type::UVEC2, Type::UVEC3, Type::UVEC4}},
-		{glslang::EbtFloat, {Type::FLOAT, Type::FLOAT, Type::VEC2, Type::VEC3, Type::VEC4}},
+	static const std::map<spirv_cross::SPIRType::BaseType, std::array<Type, 5>> typesMatrix = {
+		{spirv_cross::SPIRType::BaseType::Boolean, {Type::BOOL, Type::BOOL, Type::BVEC2, Type::BVEC3, Type::BVEC4}},
+		{spirv_cross::SPIRType::BaseType::Int, {Type::INT, Type::INT, Type::IVEC2, Type::IVEC3, Type::IVEC4}},
+		{spirv_cross::SPIRType::BaseType::UInt, {Type::UINT, Type::UINT, Type::UVEC2, Type::UVEC3, Type::UVEC4}},
+		{spirv_cross::SPIRType::BaseType::Float, {Type::FLOAT, Type::FLOAT, Type::VEC2, Type::VEC3, Type::VEC4}},
 	};
 
 	static const std::array<Type, 5> matricesList = {
@@ -246,188 +248,170 @@ Program::UniformDef::Type ShaderCompiler::convertType(const glslang::TType& type
 		return Type::OTHER;
 	}
 
-	if(type.isScalar() || type.isVector()){
-		const int size = type.getVectorSize();
-		if(size > 4){
+	const int rows = type.vecsize;
+	const int cols = type.columns;
+	if(cols <= 1){
+		if(rows > 4){
 			return Type::OTHER;
 		}
-		return typesMatrix.at(baseType)[size];
+		return typesMatrix.at(baseType)[rows];
 	}
+	if(baseType != spirv_cross::SPIRType::Float || (rows != cols) || (rows > 4) || (rows < 1)){
+		return Type::OTHER;
+	}
+	return matricesList[rows];
+}
 
-	if(type.isMatrix()){
-		const int rows = type.getMatrixRows();
-		const int cols = type.getMatrixCols();
+#pragma clang optimize off
+bool reflectBuffer(const spirv_cross::Compiler& compiler, const spirv_cross::Resource& ubo, bool storage, Program::BufferDef& def){
+	const spirv_cross::SPIRType& baseType = compiler.get_type(ubo.base_type_id);
+	const spirv_cross::SPIRType& type = compiler.get_type(ubo.type_id);
 
-		if(baseType != glslang::EbtFloat || (rows != cols) || (rows > 4) || (rows < 1)){
-			return Type::OTHER;
+	def.size = compiler.get_declared_struct_size(baseType);
+	def.binding = compiler.get_decoration(ubo.id, spv::DecorationBinding);
+	def.name = ubo.name;
+	def.storage = storage;
+	def.set = compiler.get_decoration(ubo.id, spv::DecorationDescriptorSet);
+	def.count = 1;
+	if(type.array.size() > 0){
+		if(type.array.size() > 1 || type.array[0] == 0){
+			Log::Warning() << Log::GPU << "Unsupported unsized/multi-level array of buffers in shader." << std::endl;
+			return false;
 		}
-		return matricesList[rows];
+		def.count = static_cast<uint>(type.array[0]);
 	}
-	return Program::UniformDef::Type::OTHER;
+	return true;
 }
 
-uint ShaderCompiler::getSetFromType(const glslang::TType& type){
-	const glslang::TQualifier& qualifier = type.getQualifier();
-	return qualifier.hasSet() ? (qualifier.layoutSet & qualifier.layoutSetEnd) : 0u;
+bool reflectImage(const spirv_cross::Compiler& compiler, const spirv_cross::Resource& tex, Program::ImageDef& def){
+
+	static const std::map<spv::Dim, TextureShape> texShapes = {
+			{spv::Dim1D, TextureShape::D1},
+			{spv::Dim2D, TextureShape::D2},
+			{spv::Dim3D, TextureShape::D3},
+			{spv::DimCube, TextureShape::Cube}};
+
+	const spirv_cross::SPIRType& baseType = compiler.get_type(tex.base_type_id);
+	const spirv_cross::SPIRType& type = compiler.get_type(tex.type_id);
+
+	if(texShapes.count(baseType.image.dim) == 0){
+		Log::Error() << "Unsupported texture shape in shader." << std::endl;
+		return false;
+	}
+	def.binding = compiler.get_decoration(tex.id, spv::DecorationBinding);
+	def.name = compiler.get_name(tex.id);
+	def.storage = baseType.image.sampled == 2;
+	def.set = compiler.get_decoration(tex.id, spv::DecorationDescriptorSet);
+	def.shape = texShapes.at(baseType.image.dim);
+	def.count = 1;
+	if(baseType.image.arrayed){
+		def.shape = def.shape | TextureShape::Array;
+	}
+	if(type.array.size() > 0){
+		if(type.array.size() > 1 || type.array[0] == 0){
+			Log::Warning() << Log::GPU << "Unsupported unsized/multi-level array of textures in shader." << std::endl;
+			return false;
+		}
+		def.count = static_cast<uint>(type.array[0]);
+	}
+	return true;
 }
 
-void ShaderCompiler::reflect(glslang::TProgram & program, Program::Stage & stage){
+void ShaderCompiler::reflect(const std::vector<uint32_t>& spirv, Program::Stage & stage){
 
-	program.buildReflection(EShReflectionStrictArraySuffix | EShReflectionBasicArraySuffix);
+	spirv_cross::Compiler comp(spirv);
 
 	// Retrieve group size.
 	for(uint i = 0; i < 3; ++i){
-		stage.size[i] = program.getLocalSize(i);
-	}
-	
-	// Retrieve UBOs infos.
-	const size_t uboCount = program.getNumUniformBlocks();
-	stage.buffers.resize(uboCount);
-
-	for(size_t uid = 0; uid < uboCount; ++uid){
-		const glslang::TObjectReflection& ubo = program.getUniformBlock(int(uid));
-		Program::BufferDef& def = stage.buffers[ubo.index];
-		def.binding = ubo.getBinding();
-		def.name = ubo.name;
-		def.size = ubo.size;
-		def.storage = ubo.getType()->getQualifier().getBlockStorage() == glslang::EbsStorageBuffer;
-		// Retrieve set index stored on type.
-		def.set = getSetFromType(*ubo.getType());
-		def.count = 1;
+		stage.size[i] = comp.get_execution_mode_argument(spv::ExecutionModeLocalSize, i);
 	}
 
-	static const std::map<glslang::TSamplerDim, TextureShape> texShapes = {
-		{glslang::TSamplerDim::Esd1D, TextureShape::D1},
-		{glslang::TSamplerDim::Esd2D, TextureShape::D2},
-		{glslang::TSamplerDim::Esd3D, TextureShape::D3},
-		{glslang::TSamplerDim::EsdCube, TextureShape::Cube}
-	};
+	spirv_cross::ShaderResources res = comp.get_shader_resources();
+	// No combined sampler.
+	assert(res.sampled_images.size() == 0);
+
+	// Keep track of buffers that hold pseudo 'free' uniforms.
+	std::vector<std::pair<const spirv_cross::Resource*, uint>> uniformContainers;
+
+	for(const spirv_cross::Resource& buffer : res.uniform_buffers){
+		stage.buffers.emplace_back();
+		Program::BufferDef& def = stage.buffers.back();
+		if(!reflectBuffer(comp, buffer, false, def)){
+			stage.buffers.pop_back();
+			continue;
+		}
+		if(def.set == UNIFORMS_SET){
+			uniformContainers.emplace_back(&buffer, stage.buffers.size()-1);
+		}
+	}
+
+	// All storage buffers are real buffers.
+	for(const spirv_cross::Resource& buffer : res.storage_buffers){
+		stage.buffers.emplace_back();
+		if(!reflectBuffer(comp, buffer, true, stage.buffers.back())){
+			stage.buffers.pop_back();
+		}
+	}
+
+	// Texture and storage images are processed in the same way.
+	for(const spirv_cross::Resource& img : res.separate_images){
+		stage.images.emplace_back();
+		if(!reflectImage(comp, img, stage.images.back())){
+			stage.images.pop_back();
+		}
+	}
+	for(const spirv_cross::Resource& img : res.storage_images){
+		stage.images.emplace_back();
+		if(!reflectImage(comp, img, stage.images.back())){
+			stage.images.pop_back();
+		}
+	}
 
 	// Retrieve each uniform infos.
-	const size_t uniformCount = program.getNumUniformVariables();
-	for(size_t uid = 0; uid < uniformCount; ++uid){
-		const glslang::TObjectReflection& uniform = program.getUniform(int(uid));
-		const glslang::TType& type = *uniform.getType();
+	for(const auto& container : uniformContainers){
+		const spirv_cross::Resource& ubo = *container.first;
+		const spirv_cross::SPIRType& baseType = comp.get_type(ubo.base_type_id);
 
-		const int binding = uniform.getBinding();
-		// If the variable is freely bound, it's a texture.
-		if(binding >= 0){
-			// This is a sampler, texture or image.
-			const glslang::TSampler& sampler = uniform.getType()->getSampler();
-			// Skip samplers.
-			if(sampler.type == glslang::EbtVoid){
-				continue;
-			}
-			if(texShapes.count(sampler.dim) == 0){
-				Log::Error() << "Unsupported texture shape in shader." << std::endl;
-				continue;
-			}
+		// Retrieve the buffer definition.
+		Program::BufferDef& containingBuffer = stage.buffers[container.second];
+		const uint memberCount = baseType.member_types.size();
+		for(uint mid = 0u; mid < memberCount; ++mid){
+			// Register name, type, and offset for each member.
+			const spirv_cross::SPIRType& memberType = comp.get_type(baseType.member_types[mid]);
+			//const size_t memberSize = comp.get_declared_struct_member_size(baseType, i);
+			const size_t uniformOffset = comp.type_struct_member_offset(baseType, mid);
+			const std::string uniformName = comp.get_member_name(baseType.self, mid);
+			const Program::UniformDef::Type uniformType = convertType(memberType);
 
-			stage.images.emplace_back();
-			Program::ImageDef& def = stage.images.back();
-			def.name = uniform.name;
-			def.binding = binding;
-			def.set = getSetFromType(type);
-			def.shape = texShapes.at(sampler.dim);
-			def.count = 1;
-			def.storage = sampler.image;
-			if(sampler.isArrayed()){
-				def.shape = def.shape | TextureShape::Array;
-			}
-			if(type.isArray()){
-				if(type.isUnsizedArray() || type.getArraySizes()->getNumDims() > 1){
-					Log::Warning() << Log::GPU << "Unsupported unsized/multi-level array of textures in shader." << std::endl;
+			if(memberType.array.size() != 0){
+				if(memberType.array.size() > 1 || memberType.array[0] == 0){
+					Log::Warning() << Log::GPU << "Unsupported unsized/multi-level array in shader." << std::endl;
 					continue;
 				}
-				def.count = static_cast<uint>(type.getArraySizes()->getDimSize(0));
-				// Remove brackets from the name.
-				const std::string::size_type lastOpeningBracket = def.name.find_last_of('[');
-				const std::string finalName = def.name.substr(0, lastOpeningBracket);
-				def.name = finalName;
-			}
-			continue;
-		}
-		
-		// Else, buffer.
-		// If we are in a storage buffer or generic UBO, we won't be accessed on the CPU individually.
-		Program::BufferDef& containingBuffer = stage.buffers[uniform.index];
-		if(containingBuffer.set != UNIFORMS_SET){
-			continue;
-		}
-		// Else, uniform buffer containing custom uniforms that we want to set individually from the GPU.
-		// Arrays containing basic types are not expanded automatically.
-		if(type.isArray()){
-			if(type.isUnsizedArray() || type.getArraySizes()->getNumDims() > 1){
-				Log::Warning() << Log::GPU << "Unsupported unsized/multi-level array in shader." << std::endl;
-				continue;
-			}
-			const uint size = static_cast<uint>(uniform.getType()->getArraySizes()->getDimSize(0));
-			const std::string::size_type lastOpeningBracket = uniform.name.find_last_of('[');
-			const std::string finalName = uniform.name.substr(0, lastOpeningBracket);
-			// We need a non-array version of the type.
-			glslang::TType typeWithoutArray;
-			// A deep clone is causing linking issues on Windows. Fortunately we only
-			// modify shallow data below, so we can do a shallow copy.
-			typeWithoutArray.shallowCopy(type);
-			typeWithoutArray.clearArraySizes();
-			const Program::UniformDef::Type elemType = convertType(typeWithoutArray);
-			// This works because this only happens for basic types.
-			// Minimal alignment is 16 bytes.
-			const uint elemOffset = std::max(typeWithoutArray.computeNumComponents() * 4, 16);
+				const size_t elemStride = comp.type_struct_member_array_stride(baseType, mid);
 
-			for(uint iid = 0; iid < size; ++iid){
+				for(uint iid = 0; iid < memberType.array[0]; ++iid){
+					containingBuffer.members.emplace_back();
+					Program::UniformDef& def = containingBuffer.members.back();
+					def.name = uniformName + "[" + std::to_string(iid) + "]";
+					def.type = uniformType;
+					Program::UniformDef::Location location;
+					location.binding = containingBuffer.binding;
+					location.offset = uniformOffset + iid * elemStride;
+					def.locations.emplace_back(location);
+				}
+
+			} else {
+				// Register a unique uniform.
 				containingBuffer.members.emplace_back();
 				Program::UniformDef& def = containingBuffer.members.back();
-				def.name = finalName + "[" + std::to_string(iid) + "]";
-				def.type = elemType;
+				def.name = uniformName;
+				def.type = uniformType;
 				Program::UniformDef::Location location;
 				location.binding = containingBuffer.binding;
-				location.offset = uniform.offset + iid * elemOffset;
+				location.offset = uniformOffset;
 				def.locations.emplace_back(location);
 			}
-
-		} else {
-			containingBuffer.members.emplace_back();
-			Program::UniformDef& def = containingBuffer.members.back();
-			def.name = uniform.name;
-			def.type = convertType(type);
-			Program::UniformDef::Location location;
-			location.binding = containingBuffer.binding;
-			location.offset = uniform.offset;
-			def.locations.emplace_back(location);
 		}
-
-	}
-
-	// We need to merge buffers that are at the same binding point (arrays of UBOs/SBOs).
-	std::vector<Program::BufferDef> allBuffers(stage.buffers);
-	stage.buffers.clear();
-	for(const Program::BufferDef& def : allBuffers){
-		// Check if this is not part of an array.
-		if(def.name.find("[") == std::string::npos){
-			stage.buffers.emplace_back(def);
-			stage.buffers.back().count = 1;
-			continue;
-		}
-		// Else, only consider the first element.
-		const std::string::size_type pos = def.name.find("[0]");
-		if(pos == std::string::npos){
-			continue;
-		}
-		const std::string baseName = def.name.substr(0, pos);
-		const std::string baseNameArray = baseName + "[";
-		const size_t baseNameArrayLen = baseNameArray.size();
-		size_t maxIndex = 0;
-		// Look at all elements, count how many have the same name.
-		for(const Program::BufferDef& odef : allBuffers){
-			if(odef.name.substr(0, baseNameArrayLen) == baseNameArray){
-				const std::string indexStr = odef.name.substr(baseNameArrayLen, odef.name.find_first_of("]", baseNameArrayLen));
-				const size_t index = std::stoul(indexStr);
-				maxIndex = std::max(maxIndex, index);
-			}
-		}
-		stage.buffers.emplace_back(def);
-		stage.buffers.back().name = baseName;
-		stage.buffers.back().count = maxIndex+1;
 	}
 }
