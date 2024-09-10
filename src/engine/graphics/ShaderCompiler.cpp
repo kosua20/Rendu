@@ -222,9 +222,12 @@ void ShaderCompiler::compile(const std::string & prog, ShaderType type, Program:
 	} else {
 		stage.module = VK_NULL_HANDLE;
 	}
+
 }
 
-Program::UniformDef::Type ShaderCompiler::convertType(const spirv_cross::SPIRType& type){
+/// Internal reflection helpers
+
+Program::UniformDef::Type convertType(const spirv_cross::SPIRType& type){
 	// Simplified basic type conversion.
 	// Does not support non-square matrices nor non-float matrice.
 	using Type = Program::UniformDef::Type;
@@ -262,12 +265,11 @@ Program::UniformDef::Type ShaderCompiler::convertType(const spirv_cross::SPIRTyp
 	return matricesList[rows];
 }
 
-#pragma clang optimize off
 bool reflectBuffer(const spirv_cross::Compiler& compiler, const spirv_cross::Resource& ubo, bool storage, Program::BufferDef& def){
 	const spirv_cross::SPIRType& baseType = compiler.get_type(ubo.base_type_id);
 	const spirv_cross::SPIRType& type = compiler.get_type(ubo.type_id);
 
-	def.size = compiler.get_declared_struct_size(baseType);
+	def.size = (uint)compiler.get_declared_struct_size(baseType);
 	def.binding = compiler.get_decoration(ubo.id, spv::DecorationBinding);
 	def.name = ubo.name;
 	def.storage = storage;
@@ -315,6 +317,61 @@ bool reflectImage(const spirv_cross::Compiler& compiler, const spirv_cross::Reso
 		def.count = static_cast<uint>(type.array[0]);
 	}
 	return true;
+}
+
+void reflectUniformStruct(const spirv_cross::Compiler & compiler, const spirv_cross::SPIRType & structType, Program::BufferDef & buffer, const std::string & name, size_t baseOffset ) {
+	assert(structType.basetype == spirv_cross::SPIRType::Struct);
+
+	const size_t memberCount = structType.member_types.size();
+	for(size_t mid = 0u; mid < memberCount; ++mid) {
+
+		// Register name, type, and offset for each member.
+		const uint32_t memberOffset						   = (uint32_t)baseOffset + compiler.type_struct_member_offset(structType, mid);
+		const std::string memberName					   = name + compiler.get_member_name(structType.self, mid);
+		const spirv_cross::SPIRType & memberType		   = compiler.get_type(structType.member_types[mid]);
+		const bool memberIsStruct						   = memberType.basetype == spirv_cross::SPIRType::BaseType::Struct;
+		const Program::UniformDef::Type memberInternalType = convertType(memberType);
+
+		if(memberType.array.size() != 0) {
+			if(memberType.array.size() > 1 || memberType.array[0] == 0) {
+				Log::Warning() << Log::GPU << "Unsupported unsized/multi-level array in shader." << std::endl;
+				continue;
+			}
+			const uint32_t elemStride = compiler.type_struct_member_array_stride(structType, mid);
+
+			for(uint iid = 0; iid < memberType.array[0]; ++iid) {
+				const std::string elementName = memberName + "[" + std::to_string(iid) + "]";
+				const uint32_t elementOffset  = memberOffset + iid * elemStride;
+
+				if(memberIsStruct) {
+					reflectUniformStruct(compiler, memberType, buffer, elementName + ".", elementOffset);
+				} else {
+					buffer.members.emplace_back();
+					Program::UniformDef & def = buffer.members.back();
+					def.name				  = elementName;
+					def.type				  = memberInternalType;
+					Program::UniformDef::Location location;
+					location.binding = buffer.binding;
+					location.offset	 = elementOffset;
+					def.locations.emplace_back(location);
+				}
+			}
+
+		} else {
+			if(memberIsStruct) {
+				reflectUniformStruct(compiler, memberType, buffer, memberName + ".", memberOffset);
+			} else {
+				buffer.members.emplace_back();
+				Program::UniformDef & def = buffer.members.back();
+				def.name				  = memberName;
+				def.type				  = memberInternalType;
+				Program::UniformDef::Location location;
+				location.binding = buffer.binding;
+				location.offset	 = memberOffset;
+				def.locations.emplace_back(location);
+			}
+		}
+	}
 }
 
 void ShaderCompiler::reflect(const std::vector<uint32_t>& spirv, Program::Stage & stage){
@@ -370,48 +427,9 @@ void ShaderCompiler::reflect(const std::vector<uint32_t>& spirv, Program::Stage 
 	// Retrieve each uniform infos.
 	for(const auto& container : uniformContainers){
 		const spirv_cross::Resource& ubo = *container.first;
-		const spirv_cross::SPIRType& baseType = comp.get_type(ubo.base_type_id);
-
+		Program::BufferDef & containingBuffer = stage.buffers[container.second];
+		const spirv_cross::SPIRType & baseType = comp.get_type(ubo.base_type_id);
 		// Retrieve the buffer definition.
-		Program::BufferDef& containingBuffer = stage.buffers[container.second];
-		const uint memberCount = baseType.member_types.size();
-		for(uint mid = 0u; mid < memberCount; ++mid){
-			// Register name, type, and offset for each member.
-			const spirv_cross::SPIRType& memberType = comp.get_type(baseType.member_types[mid]);
-			//const size_t memberSize = comp.get_declared_struct_member_size(baseType, i);
-			const size_t uniformOffset = comp.type_struct_member_offset(baseType, mid);
-			const std::string uniformName = comp.get_member_name(baseType.self, mid);
-			const Program::UniformDef::Type uniformType = convertType(memberType);
-
-			if(memberType.array.size() != 0){
-				if(memberType.array.size() > 1 || memberType.array[0] == 0){
-					Log::Warning() << Log::GPU << "Unsupported unsized/multi-level array in shader." << std::endl;
-					continue;
-				}
-				const size_t elemStride = comp.type_struct_member_array_stride(baseType, mid);
-
-				for(uint iid = 0; iid < memberType.array[0]; ++iid){
-					containingBuffer.members.emplace_back();
-					Program::UniformDef& def = containingBuffer.members.back();
-					def.name = uniformName + "[" + std::to_string(iid) + "]";
-					def.type = uniformType;
-					Program::UniformDef::Location location;
-					location.binding = containingBuffer.binding;
-					location.offset = uniformOffset + iid * elemStride;
-					def.locations.emplace_back(location);
-				}
-
-			} else {
-				// Register a unique uniform.
-				containingBuffer.members.emplace_back();
-				Program::UniformDef& def = containingBuffer.members.back();
-				def.name = uniformName;
-				def.type = uniformType;
-				Program::UniformDef::Location location;
-				location.binding = containingBuffer.binding;
-				location.offset = uniformOffset;
-				def.locations.emplace_back(location);
-			}
-		}
+		reflectUniformStruct(comp, baseType, containingBuffer, "", 0);
 	}
 }

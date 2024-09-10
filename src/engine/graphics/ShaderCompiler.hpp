@@ -41,12 +41,6 @@ public:
 	
 private:
 
-	/** Convert a uniform compiler type to Rendu internal types.
-	 * \param type the type to convert
-	 * \return the corresponding Rendu uniform type
-	 */
-	static Program::UniformDef::Type convertType(const spirv_cross::SPIRType& type);
-
 	/** Perform reflection on a compiled program and populate our reflection structures.
 	 * \param spirv the compiled SPIR-V program
 	 * \param stage will contain reflection data
