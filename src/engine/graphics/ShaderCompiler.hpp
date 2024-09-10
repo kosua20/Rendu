@@ -4,13 +4,8 @@
 #include "graphics/GPUObjects.hpp"
 #include "Common.hpp"
 
-// Forward declarations
-namespace spirv_cross {
-	struct SPIRType;
-}
-
 /**
- \brief Relies on glslang to compile GLSL shaders to SPIR-V and generate reflection data.
+ \brief Relies on glslang to compile GLSL shaders to SPIR-V and SPIRV-Cross to generate reflection data.
  \ingroup Graphics
  */
 class ShaderCompiler {
