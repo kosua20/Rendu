@@ -114,13 +114,13 @@ function LinkSystemLibraries()
 
 	-- Vulkan dependencies
 	filter("system:macosx or linux")
-		links({"glslang", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "SPIRV", "SPIRV-Tools-opt", "SPIRV-Tools", "OSDependent", "spirv-cross-core", "spirv-cross-cpp" })
+		links({"glslang", "MachineIndependent", "GenericCodeGen", "SPIRV", "SPIRV-Tools-opt", "SPIRV-Tools", "OSDependent", "spirv-cross-core", "spirv-cross-cpp" })
 	
 	filter({"system:windows", "configurations:Dev"})
-		links({"glslangd", "OGLCompilerd", "SPIRVd", "OSDependentd", "MachineIndependentd", "GenericCodeGend", "SPIRV-Tools-optd", "SPIRV-Toolsd", "spirv-cross-cored", "spirv-cross-cppd" })
+		links({"glslangd",  "SPIRVd", "OSDependentd", "MachineIndependentd", "GenericCodeGend", "SPIRV-Tools-optd", "SPIRV-Toolsd", "spirv-cross-cored", "spirv-cross-cppd" })
 	
 	filter({"system:windows", "configurations:Release" })
-		links({"glslang", "OGLCompiler", "SPIRV", "OSDependent", "MachineIndependent", "GenericCodeGen", "SPIRV-Tools-opt", "SPIRV-Tools", "spirv-cross-core", "spirv-cross-cpp"})
+		links({"glslang", "SPIRV", "OSDependent", "MachineIndependent", "GenericCodeGen", "SPIRV-Tools-opt", "SPIRV-Tools", "spirv-cross-core", "spirv-cross-cpp"})
 
 	filter({})
 end
