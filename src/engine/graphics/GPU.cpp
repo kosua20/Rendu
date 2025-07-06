@@ -145,6 +145,7 @@ bool GPU::setup(const std::string & appName) {
 			if(selectedDevice == VK_NULL_HANDLE || isDiscrete){
 				selectedDevice = device;
 				_context.portability = hasPortability;
+				break;
 			}
 		}
 	}
