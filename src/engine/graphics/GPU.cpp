@@ -713,6 +713,11 @@ void GPU::setupTexture(Texture & texture) {
 
 	}
 
+	if(texture.drawable) {
+		VkCommandBuffer commandBuffer = _context.getUploadCommandBuffer();
+		VkUtils::textureLayoutBarrier(commandBuffer, texture, texture.gpu->defaultLayout);
+	}
+
 	++_metrics.textures;
 }
 
