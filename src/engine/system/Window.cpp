@@ -168,12 +168,7 @@ bool Window::nextFrame() {
 	do {
 		// Update events (inputs,...).
 		Input::manager().update();
-		// On some platforms, when the window is minimized, the swapchain is invalidated and expected to have a 0,0 extent
-		// which is technicaly forbidden by the specification, leading to invalidate operations.
-		// To prevent this, wait for new events without rendering while we are minimized.
-		if(Input::manager().minimized()){
-			continue;
-		}
+		
 		// Handle quitting.
 		if(_allowEscape && Input::manager().pressed(Input::Key::Escape)) {
 			perform(Action::Quit);
@@ -183,8 +178,10 @@ bool Window::nextFrame() {
 			uint w = uint(Input::manager().size()[0]);
 			uint h = uint(Input::manager().size()[1]);
 
-			// If minimized and undetected, waiting for events is not working, poll in a loop.
-			while(w == 0 || h == 0){
+			// On some platforms, when the window is minimized, the swapchain is invalidated and expected to have a 0,0 extent
+			// which is technicaly forbidden by the specification, leading to invalidate operations.
+			// To prevent this, wait for new events without rendering while we are minimized.
+			while(Input::manager().minimized() || w == 0 || h == 0) {
 				Input::manager().update();
 				w = uint(Input::manager().size()[0]);
 				h = uint(Input::manager().size()[1]);
