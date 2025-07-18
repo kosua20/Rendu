@@ -270,8 +270,12 @@ bool Swapchain::finishFrame(){
 
 	// If we have upload operations to perform, ensure they are all complete before
 	// we start executing the render command buffer.
+	VkMemoryBarrier uploadBarrier {};
+	uploadBarrier.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+	uploadBarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT ;
+	uploadBarrier.dstAccessMask = VK_ACCESS_INDEX_READ_BIT | VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT | VK_ACCESS_UNIFORM_READ_BIT | VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_TRANSFER_READ_BIT;
 	vkCmdPipelineBarrier(_context->getUploadCommandBuffer(), VK_PIPELINE_STAGE_TRANSFER_BIT,
-		VK_PIPELINE_STAGE_TRANSFER_BIT | VK_PIPELINE_STAGE_VERTEX_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 0, nullptr);
+		VK_PIPELINE_STAGE_TRANSFER_BIT | VK_PIPELINE_STAGE_VERTEX_SHADER_BIT | VK_PIPELINE_STAGE_VERTEX_INPUT_BIT | VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &uploadBarrier, 0, nullptr, 0, nullptr);
 
 	// Make sure that the backbuffer is presentable.
 	VkUtils::imageLayoutBarrier(_context->getRenderCommandBuffer(), *(_backbuffer->gpu), VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 0, 1, 0, 1);
