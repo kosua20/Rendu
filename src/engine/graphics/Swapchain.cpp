@@ -210,7 +210,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 
 	// Semaphores and fences.
 	_imagesAvailable.resize(_context->frameCount);
-	_framesFinished.resize(_context->frameCount);
+	_framesFinished.resize(_imageCount);
 	_framesInFlight.resize(_context->frameCount);
 
 	VkSemaphoreCreateInfo semaphoreInfo = {};
@@ -220,20 +220,29 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 	fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-	for(size_t i = 0; i < _framesFinished.size(); i++) {
+	for(size_t i = 0; i < _imagesAvailable.size(); i++) {
 		VkResult availRes = vkCreateSemaphore(_context->device, &semaphoreInfo, nullptr, &_imagesAvailable[i]);
-		VkResult finishRes = vkCreateSemaphore(_context->device, &semaphoreInfo, nullptr, &_framesFinished[i]);
-		VkResult inflightRes = vkCreateFence(_context->device, &fenceInfo, nullptr, &_framesInFlight[i]);
-
 		VkUtils::setDebugName(*_context, VK_OBJECT_TYPE_SEMAPHORE, uint64_t(_imagesAvailable[i]), "Image available %u", i);
-		VkUtils::setDebugName(*_context, VK_OBJECT_TYPE_SEMAPHORE, uint64_t(_framesFinished[i]), "Frame finished %u", i);
-		VkUtils::setDebugName(*_context, VK_OBJECT_TYPE_FENCE, uint64_t(_framesInFlight[i]), "Frame in flight %u", i);
-
-		if(availRes != VK_SUCCESS || finishRes != VK_SUCCESS || inflightRes != VK_SUCCESS){
-			Log::Error() << Log::GPU << "Unable to create semaphores and fences." << std::endl;
+		if(availRes != VK_SUCCESS ){
+			Log::Error() << Log::GPU << "Unable to create semaphores." << std::endl;
 		}
 	}
-	
+
+	for(size_t i = 0; i < _framesFinished.size(); i++) {
+		VkResult finishRes	 = vkCreateSemaphore(_context->device, &semaphoreInfo, nullptr, &_framesFinished[i]);
+		VkUtils::setDebugName(*_context, VK_OBJECT_TYPE_SEMAPHORE, uint64_t(_framesFinished[i]), "Frame finished %u", i);
+		if( finishRes != VK_SUCCESS) {
+			Log::Error() << Log::GPU << "Unable to create semaphores." << std::endl;
+		}
+	}
+
+	for(size_t i = 0; i < _framesInFlight.size(); i++) {
+		VkResult inflightRes = vkCreateFence(_context->device, &fenceInfo, nullptr, &_framesInFlight[i]);
+		VkUtils::setDebugName(*_context, VK_OBJECT_TYPE_FENCE, uint64_t(_framesInFlight[i]), "Frame in flight %u", i);
+		if(inflightRes != VK_SUCCESS) {
+			Log::Error() << Log::GPU << "Unable to create fences." << std::endl;
+		}
+	}
 }
 
 void Swapchain::resize(uint width, uint height){
@@ -286,7 +295,7 @@ bool Swapchain::finishFrame(){
 	submitInfo.pCommandBuffers = &commandBuffers[0];
 	// Semaphore for when the command buffer is done, so that we can present the image.
 	submitInfo.signalSemaphoreCount = 1;
-	submitInfo.pSignalSemaphores = &_framesFinished[swapIndex];
+	submitInfo.pSignalSemaphores	= &_framesFinished[_imageIndex];
 	// Add the fence so that we don't reuse the command buffer while it's in use.
 	VK_RET(vkResetFences(_context->device, 1, &_framesInFlight[swapIndex]));
 	VK_RET(vkQueueSubmit(_context->graphicsQueue, 1, &submitInfo, _framesInFlight[swapIndex]));
@@ -296,7 +305,7 @@ bool Swapchain::finishFrame(){
 	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 	presentInfo.waitSemaphoreCount = 1;
 	// Check for the command buffer to be done.
-	presentInfo.pWaitSemaphores = &_framesFinished[swapIndex];
+	presentInfo.pWaitSemaphores = &_framesFinished[_imageIndex];
 	presentInfo.swapchainCount = 1;
 	presentInfo.pSwapchains = &_swapchain;
 	presentInfo.pImageIndices = &_imageIndex;
@@ -391,10 +400,13 @@ void Swapchain::clean() {
 	vkFreeCommandBuffers(_context->device, _context->commandPool, uint32_t(_context->uploadCommandBuffers.size()), _context->uploadCommandBuffers.data());
 	vkDestroySwapchainKHR(_context->device, _swapchain, nullptr);
 
+	for(size_t i = 0; i < _imagesAvailable.size(); ++i) {
+		vkDestroySemaphore(_context->device, _imagesAvailable[i], nullptr);
+	}
 	for(size_t i = 0; i < _framesFinished.size(); ++i) {
 		vkDestroySemaphore(_context->device, _framesFinished[i], nullptr);
-		vkDestroySemaphore(_context->device, _imagesAvailable[i], nullptr);
+	}
+	for(size_t i = 0; i < _framesInFlight.size(); ++i) {
 		vkDestroyFence(_context->device, _framesInFlight[i], nullptr);
 	}
-
 }
