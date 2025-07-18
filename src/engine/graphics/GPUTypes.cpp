@@ -131,8 +131,11 @@ uint64_t GPUQuery::value(){
 	VkQueryPool& pool = context->queryAllocators.at(_type).getReadPool();
 
 	uint64_t data[2] = {0, 0};
-	VK_RET(vkGetQueryPoolResults(context->device, pool, _offset, _count, 2 * sizeof(uint64_t), &data[0], sizeof(uint64_t), VK_QUERY_RESULT_64_BIT | VK_QUERY_RESULT_WAIT_BIT));
-
+	VkResult res = vkGetQueryPoolResults(context->device, pool, _offset, _count, 2 * sizeof(uint64_t), &data[0], sizeof(uint64_t), VK_QUERY_RESULT_64_BIT);
+	// Don't wait for queries if they are not ready (in case we skip a frame while minmized for instance).
+	if(res == VK_NOT_READY) {
+		return 0;
+	}
 	// For duration elapsed, we compute the time between the two timestamps.
 	if(_type == GPUQuery::Type::TIME_ELAPSED){
 		// Weird thing happened, ignore.
