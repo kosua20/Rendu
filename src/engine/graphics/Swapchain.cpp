@@ -285,7 +285,7 @@ bool Swapchain::finishFrame(){
 	// Submit both command buffers.
 	const uint swapIndex = _context->swapIndex;
 	// Maybe use VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT instead ?
-	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT};
 	VkSubmitInfo submitInfo = {};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 	submitInfo.waitSemaphoreCount = 1;
